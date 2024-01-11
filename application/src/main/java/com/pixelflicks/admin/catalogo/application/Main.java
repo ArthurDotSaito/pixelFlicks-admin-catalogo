@@ -1,4 +1,4 @@
-package com.pixelflicks.admin.catalogo;
+package com.pixelflicks.admin.catalogo.application;
 
 public class Main {
     public static void main(String[] args) {

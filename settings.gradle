@@ -1,2 +1,5 @@
 rootProject.name = 'pixelflicks_admin_catalogo'
+include 'domain'
+include 'application'
+include 'infrastructure'
 
