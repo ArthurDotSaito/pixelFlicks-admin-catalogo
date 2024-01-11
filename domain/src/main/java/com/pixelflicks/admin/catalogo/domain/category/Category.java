@@ -1,10 +1,11 @@
 package com.pixelflicks.admin.catalogo.domain.category;
 
+import com.pixelflicks.admin.catalogo.domain.AggregateRoot;
+
 import java.time.Instant;
 import java.util.UUID;
 
-public class Category {
-    private String id;
+public class Category extends AggregateRoot<CategoryID> {
     private String name;
     private String description;
     private boolean active;
@@ -12,29 +13,29 @@ public class Category {
     private Instant updatedAt;
     private Instant deletedAt;
 
-    private Category(final String id,
-                    final String name,
-                    final String description,
-                    final boolean active,
-                    final Instant createdAt,
-                    final Instant updatedAt,
-                    final Instant deletedAt) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.active = active;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
+    private Category(final CategoryID aId,
+                    final String aName,
+                    final String aDescription,
+                    final boolean aIsActive,
+                    final Instant aCreationDate,
+                    final Instant aUpdateDDate,
+                    final Instant aDeleteDate) {
+        super(aId);
+        this.name = aName;
+        this.description = aDescription;
+        this.active = aIsActive;
+        this.createdAt = aCreationDate;
+        this.updatedAt = aUpdateDDate;
+        this.deletedAt = aDeleteDate;
     }
 
     public static Category newCategory(final String aName, final String aDescription, final boolean aIsActive){
-        final var id = UUID.randomUUID().toString();
+        final var id = CategoryID.unique();
         final var now = Instant.now();
         return new Category(id, aName, aDescription, aIsActive, now, now, null);
     }
 
-    public String getId() {
+    public CategoryID getId() {
         return id;
     }
 
@@ -60,33 +61,5 @@ public class Category {
 
     public Instant getDeletedAt() {
         return deletedAt;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public void setDeletedAt(Instant deletedAt) {
-        this.deletedAt = deletedAt;
     }
 }
