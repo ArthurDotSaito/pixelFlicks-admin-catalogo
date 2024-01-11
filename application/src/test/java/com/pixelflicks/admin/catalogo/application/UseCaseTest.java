@@ -1,6 +1,5 @@
 package com.pixelflicks.admin.catalogo.application;
 
-import com.pixelflicks.admin.catalogo.domain.Category;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
