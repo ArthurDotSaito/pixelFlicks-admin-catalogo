@@ -1,6 +1,7 @@
 package com.pixelflicks.admin.catalogo.domain;
 
 import java.util.Objects;
+import com.pixelflicks.admin.catalogo.domain.validation.ValidationHandler;
 
 public abstract class Entity<ID extends Identifier> {
     protected final ID id;
@@ -12,6 +13,8 @@ public abstract class Entity<ID extends Identifier> {
     public ID getId() {
         return id;
     }
+
+    public abstract void validate(ValidationHandler handler);
 
     @Override
     public boolean equals(Object o) {

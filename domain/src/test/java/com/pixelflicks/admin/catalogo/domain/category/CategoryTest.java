@@ -1,6 +1,8 @@
 package com.pixelflicks.admin.catalogo.domain.category;
 
 import com.pixelflicks.admin.catalogo.domain.category.Category;
+import com.pixelflicks.admin.catalogo.domain.exceptions.DomainException;
+import com.pixelflicks.admin.catalogo.domain.validation.handler.ThrowsValidationHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +23,9 @@ public class CategoryTest {
         Assertions.assertNotNull(actualCategory.getCreatedAt());
         Assertions.assertNotNull(actualCategory.getUpdatedAt());
         Assertions.assertNull(actualCategory.getDeletedAt());
-    }    @Test
+    }
+
+    @Test
     public void givenAnValidNewName_whenCategoryAndValidate_thenShouldReceiveError(){
         final String expectedName = null;
         final var expectedErrorMessage = "'name' should not be null";
@@ -32,8 +36,10 @@ public class CategoryTest {
 
         final var actualCategory = Category.newCategory(expectedName,expectedDescription,expectedIsActive);
 
-        final var actualException = Assertions.assertThrows(DomainException.class, () -> actualCategory.validate());
-        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0));
+        final var actualException = Assertions.assertThrows(DomainException.class,
+                () -> actualCategory.validate(new ThrowsValidationHandler()));
+
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
     }
 }
