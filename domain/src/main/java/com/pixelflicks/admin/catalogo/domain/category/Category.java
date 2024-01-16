@@ -4,7 +4,6 @@ import com.pixelflicks.admin.catalogo.domain.AggregateRoot;
 import com.pixelflicks.admin.catalogo.domain.validation.ValidationHandler;
 
 import java.time.Instant;
-import java.util.UUID;
 
 public class Category extends AggregateRoot<CategoryID> {
     private String name;
