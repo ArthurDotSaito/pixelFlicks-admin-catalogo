@@ -28,7 +28,7 @@ public class CategoryTest {
     @Test
     public void givenAInvalidNullName_whenCallCategoryAndValidate_thenShouldReceiveError(){
         final String expectedName = null;
-        final var expectedErrorMessage = "'name' should not be null";
+        final var expectedErrorMessage = "A 'name' should not be null";
         final var expectedErrorCount = 1;
 
         final var expectedDescription = "Categoria mais assistida";
@@ -45,7 +45,7 @@ public class CategoryTest {
     @Test
     public void givenAInvalidEmptyName_whenCallCategoryAndValidate_thenShouldReceiveError(){
         final var expectedName = "  ";
-        final var expectedErrorMessage = "'name' should not be empty";
+        final var expectedErrorMessage = "A 'name' should not be empty";
         final var expectedErrorCount = 1;
 
         final var expectedDescription = "Categoria mais assistida";
@@ -62,7 +62,7 @@ public class CategoryTest {
     @Test
     public void givenAInvalidNameLengthLessThan3_whenCallCategoryAndValidate_thenShouldReceiveError(){
         final var expectedName = "Fa ";
-        final var expectedErrorMessage = "'name' must contain at least 3 characters";
+        final var expectedErrorMessage = "A 'name' must be between 3 and 255 characters";
         final var expectedErrorCount = 1;
 
         final var expectedDescription = "Categoria mais assistida";
@@ -81,8 +81,9 @@ public class CategoryTest {
         final var expectedName = """
                 Desde ontem a noite o deploy automatizado no Heroku deletou todas as entradas de estados estáticos nos componentes da UI.
                 Com este commit, a disposição dos elementos HTML deletou todas as entradas da execução parelela de funções em multi-threads.
+                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
                 """;
-        final var expectedErrorMessage = "'name' must be shorter than 255 characters";
+        final var expectedErrorMessage = "A 'name' must be between 3 and 255 characters";
         final var expectedErrorCount = 1;
 
         final var expectedDescription = "Categoria mais assistida";
@@ -93,8 +94,9 @@ public class CategoryTest {
         final var actualException = Assertions.assertThrows(DomainException.class,
                 () -> actualCategory.validate(new ThrowsValidationHandler()));
 
-        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+
     }
     @Test
     public void givenAValidEmptyDescription_whenCallCategoryAndValidate_thenShouldReceiveError(){
@@ -103,9 +105,6 @@ public class CategoryTest {
         final var expectedIsActive = true;
 
         final var actualCategory = Category.newCategory(expectedName, expectedDescription, expectedIsActive);
-
-        final var actualException = Assertions.assertThrows(DomainException.class,
-                () -> actualCategory.validate(new ThrowsValidationHandler()));
 
         Assertions.assertDoesNotThrow(() -> actualCategory.validate(new ThrowsValidationHandler()));
 
@@ -121,13 +120,11 @@ public class CategoryTest {
     @Test
     public void givenAValidFalseIsActive_whenCallCategoryAndValidate_thenShouldReceiveError(){
         final var expectedName = "Filmes";
-        final var expectedDescription = "A categoria mais assistida ";
+        final var expectedDescription = "A categoria mais assistida";
         final var expectedIsActive = false;
 
-        final var actualCategory = Category.newCategory(expectedName, expectedDescription, expectedIsActive);
-
-        final var actualException = Assertions.assertThrows(DomainException.class,
-                () -> actualCategory.validate(new ThrowsValidationHandler()));
+        final var actualCategory =
+                Category.newCategory(expectedName, expectedDescription, expectedIsActive);
 
         Assertions.assertDoesNotThrow(() -> actualCategory.validate(new ThrowsValidationHandler()));
 
@@ -138,6 +135,6 @@ public class CategoryTest {
         Assertions.assertEquals(expectedIsActive, actualCategory.isActive());
         Assertions.assertNotNull(actualCategory.getCreatedAt());
         Assertions.assertNotNull(actualCategory.getUpdatedAt());
-        Assertions.assertNull(actualCategory.getDeletedAt());
+        Assertions.assertNotNull(actualCategory.getDeletedAt());
     }
 }
