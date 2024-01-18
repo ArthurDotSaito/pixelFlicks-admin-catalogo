@@ -6,6 +6,8 @@ import com.pixelflicks.admin.catalogo.domain.validation.Validator;
 
 public class CategoryValidator extends Validator {
     private final Category category;
+    private static final int MAX_NAME_LENGTH = 255;
+    private static final int MIN_NAME_LENGTH = 3;
 
     public CategoryValidator(final Category category, final ValidationHandler aHandler) {
         super(aHandler);
@@ -31,7 +33,7 @@ public class CategoryValidator extends Validator {
         }
 
         final var nameLength = name.trim().length();
-        if (nameLength > 255 || nameLength < 3) {
+        if (nameLength > MAX_NAME_LENGTH || nameLength < MIN_NAME_LENGTH) {
             this.validationHandler().append(new Error("A 'name' must be between 3 and 255 characters"));
         }
     }
