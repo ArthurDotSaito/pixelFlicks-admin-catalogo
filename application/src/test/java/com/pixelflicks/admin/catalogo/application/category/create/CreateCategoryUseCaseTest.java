@@ -1,6 +1,7 @@
 package com.pixelflicks.admin.catalogo.application.category.create;
 
 import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
+import com.pixelflicks.admin.catalogo.domain.exceptions.DomainException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Objects;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 public class CreateCategoryUseCaseTest {
@@ -25,7 +27,6 @@ public class CreateCategoryUseCaseTest {
         final var expectedName = "Filmes";
         final var expectedDescription = "A categoria mais assistida";
         final var expectedIsActive = true;
-        final var expectedCategory = true;
 
         final var aCommand = CreateCategoryCommand.with(expectedName, expectedDescription, expectedIsActive);
 
@@ -35,7 +36,7 @@ public class CreateCategoryUseCaseTest {
 
         Assertions.assertNotNull(actualOutput);
         Assertions.assertNotNull(actualOutput.id());
-        Mockito.verify(categoryGateway, Mockito.times(1)).
+        Mockito.verify(categoryGateway, times(1)).
                 create(Mockito.argThat(aCategory ->{
                     return Objects.equals(expectedName, aCategory.getName())
                             && Objects.equals(expectedDescription, aCategory.getDescription())
@@ -49,15 +50,18 @@ public class CreateCategoryUseCaseTest {
     }
 
     public void givenAInvalidName_whenCallsCreateCategory_thenShouldReturnAnDomainException(){
-        final var expectedName = "  ";
+        final String expectedName = null;
         final var expectedDescription = "A categoria mais assistida";
         final var expectedIsActive = true;
-        final var expectedCategory = true;
+        final var expectedErrorMessage = "'name' should not be null";
+        final var expectedErrorCount = 1;
 
-        final var aCommand = CreateCategoryCommand.with(expectedName, expectedDescription, expectedIsActive);
+        final var aCommand =  CreateCategoryCommand.with(expectedName, expectedDescription, expectedIsActive);
 
-        Mockito.when(categoryGateway.create(Mockito.any())).thenAnswer(returnsFirstArg());
+        final var actualException = Assertions.assertThrows(DomainException.class, () -> useCase.execute(aCommand));
 
-        final var actualOutput = useCase.execute(aCommand);
+        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
+        Mockito.verify(categoryGateway, times(0)).create(Mockito.any());
+
     }
 }
