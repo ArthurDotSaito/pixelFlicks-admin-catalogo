@@ -18,7 +18,7 @@ public class DefaultCreateCategoryUseCase extends CreateCategoryUseCase{
         final var aDescription = aCommand.description();
         final var isActive = aCommand.isActive();
 
-        final var aCategory = Category.newCategory(aName, aDescription,isActive);
+        final var aCategory = Category.newCategory(aName, aDescription, isActive);
         aCategory.validate(new ThrowsValidationHandler());
 
         return CreateCategoryOutput.from(this.categoryGateway.create(aCategory));
