@@ -46,9 +46,9 @@ public class CreateCategoryUseCaseTest {
                             && Objects.nonNull(aCategory.getUpdatedAt())
                             && Objects.isNull(aCategory.getDeletedAt());
                 }));
-
     }
 
+    @Test
     public void givenAInvalidName_whenCallsCreateCategory_thenShouldReturnAnDomainException(){
         final String expectedName = null;
         final var expectedDescription = "A categoria mais assistida";
@@ -62,6 +62,31 @@ public class CreateCategoryUseCaseTest {
 
         Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
         Mockito.verify(categoryGateway, times(0)).create(Mockito.any());
+    }
 
+    @Test
+    public void givenAValidCommandWithInactiveCategory_whenCallsCreateCategory_thenShouldReturnInactiveCategoryId(){
+        final String expectedName = "Filmes";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = false;
+
+        final var aCommand =  CreateCategoryCommand.with(expectedName, expectedDescription, expectedIsActive);
+        Mockito.when(categoryGateway.create(Mockito.any())).thenAnswer(returnsFirstArg());
+
+        final var actualOutput = useCase.execute(aCommand);
+
+
+        Assertions.assertNotNull(actualOutput);
+        Assertions.assertNotNull(actualOutput.id());
+        Mockito.verify(categoryGateway, times(1)).
+                create(Mockito.argThat(aCategory ->{
+                    return Objects.equals(expectedName, aCategory.getName())
+                            && Objects.equals(expectedDescription, aCategory.getDescription())
+                            && Objects.equals(expectedIsActive, aCategory.isActive())
+                            && Objects.nonNull(aCategory.getId())
+                            && Objects.nonNull(aCategory.getCreatedAt())
+                            && Objects.nonNull(aCategory.getUpdatedAt())
+                            && Objects.nonNull(aCategory.getDeletedAt());
+                }));
     }
 }
