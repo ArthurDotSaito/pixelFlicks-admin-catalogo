@@ -32,7 +32,7 @@ public class CreateCategoryUseCaseTest {
 
         Mockito.when(categoryGateway.create(Mockito.any())).thenAnswer(returnsFirstArg());
 
-        final var actualOutput = useCase.execute(aCommand);
+        final var actualOutput = useCase.execute(aCommand).get();
 
         Assertions.assertNotNull(actualOutput);
         Assertions.assertNotNull(actualOutput.id());
@@ -58,9 +58,10 @@ public class CreateCategoryUseCaseTest {
 
         final var aCommand =  CreateCategoryCommand.with(expectedName, expectedDescription, expectedIsActive);
 
-        final var actualException = Assertions.assertThrows(DomainException.class, () -> useCase.execute(aCommand));
+        final var notification = useCase.execute(aCommand).getLeft();
 
-        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
+        Assertions.assertEquals(expectedErrorMessage, notification.getErrors().get(0).message());
+        Assertions.assertEquals(expectedErrorCount, notification.getErrors().size());
         Mockito.verify(categoryGateway, times(0)).create(Mockito.any());
     }
 
@@ -73,7 +74,7 @@ public class CreateCategoryUseCaseTest {
         final var aCommand =  CreateCategoryCommand.with(expectedName, expectedDescription, expectedIsActive);
         Mockito.when(categoryGateway.create(Mockito.any())).thenAnswer(returnsFirstArg());
 
-        final var actualOutput = useCase.execute(aCommand);
+        final var actualOutput = useCase.execute(aCommand).get();
 
         Assertions.assertNotNull(actualOutput);
         Assertions.assertNotNull(actualOutput.id());
