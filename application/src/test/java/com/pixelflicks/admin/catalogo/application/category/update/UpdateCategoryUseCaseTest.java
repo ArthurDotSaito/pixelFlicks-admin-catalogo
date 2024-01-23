@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Mockito.times;
@@ -29,6 +30,26 @@ public class UpdateCategoryUseCaseTest {
 
         final var aCommand = UpdateCategoryCommand.with(expectedId.getValue(), expectedName, expectedDescription, expectedIsActive);
 
+        Mockito.when(categoryGateway.findById(Mockito.eq(expectedId)))
+                .thenReturn(Optional.of(aCategory));
+
+        Mockito.when(categoryGateway.update(Mockito.any()))
+                .thenAnswer(returnsFirstArg());
+
+        final var actualOutput = useCase.execute(aCommand).get();
+
+        Assertions.assertNotNull(actualOutput);
+        Assertions.assertNotNull(actualOutput.id());
+        Mockito.verify(categoryGateway, times(1)).findById(Mockito.eq(expectedId));
+        Mockito.verify(categoryGateway, times(1)).update(Mockito.argThat(aUpdatedCategory ->{
+            return Objects.equals(expectedName, aUpdatedCategory.getName())
+                    && Objects.equals(expectedDescription, aUpdatedCategory.getDescription())
+                    && Objects.equals(expectedIsActive, aUpdatedCategory.isActive())
+                    && Objects.equals(expectedId, aUpdatedCategory.getId())
+                    && Objects.equals(aCategory.getCreatedAt(), aUpdatedCategory.getCreatedAt())
+                    && aCategory.getCreatedAt().isBefore(aUpdatedCategory.getUpdatedAt())
+                    && Objects.isNull(aUpdatedCategory.getDeletedAt());
+        }));
 
     }
 }
