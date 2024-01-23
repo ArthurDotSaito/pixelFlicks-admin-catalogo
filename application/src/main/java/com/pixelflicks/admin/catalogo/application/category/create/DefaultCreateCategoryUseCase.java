@@ -29,6 +29,10 @@ public class DefaultCreateCategoryUseCase extends CreateCategoryUseCase{
     }
 
     private Either<Notification, CreateCategoryOutput> create(Category aCategory) {
+        API.Try(() -> this.categoryGateway.create(aCategory))
+                .toEither()
+                .bimap(Notification::create, CreateCategoryOutput::from);
+
         return API.Right(CreateCategoryOutput.from(this.categoryGateway.create(aCategory)));
     }
 
