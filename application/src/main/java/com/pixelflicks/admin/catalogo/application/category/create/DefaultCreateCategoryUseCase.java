@@ -22,18 +22,17 @@ public class DefaultCreateCategoryUseCase extends CreateCategoryUseCase{
         final var isActive = aCommand.isActive();
 
         final var notification = Notification.create();
+
         final var aCategory = Category.newCategory(aName, aDescription, isActive);
         aCategory.validate(notification);
 
         return notification.hasErrors() ? API.Left(notification) : create(aCategory);
     }
 
-    private Either<Notification, CreateCategoryOutput> create(Category aCategory) {
-        API.Try(() -> this.categoryGateway.create(aCategory))
+    private Either<Notification, CreateCategoryOutput> create(final Category aCategory) {
+        return API.Try(() -> this.categoryGateway.create(aCategory))
                 .toEither()
                 .bimap(Notification::create, CreateCategoryOutput::from);
-
-        return API.Right(CreateCategoryOutput.from(this.categoryGateway.create(aCategory)));
     }
 
 }
