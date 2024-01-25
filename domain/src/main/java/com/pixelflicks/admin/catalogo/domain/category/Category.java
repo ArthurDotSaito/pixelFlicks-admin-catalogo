@@ -37,7 +37,15 @@ public class Category extends AggregateRoot<CategoryID> implements Cloneable{
     }
 
     public static Category clone(final Category aCategory){
-        return aCategory.clone();
+        return new Category(
+                aCategory.getId(),
+                aCategory.name,
+                aCategory.description,
+                aCategory.isActive(),
+                aCategory.createdAt,
+                aCategory.updatedAt,
+                aCategory.deletedAt
+        );
     }
 
     @Override

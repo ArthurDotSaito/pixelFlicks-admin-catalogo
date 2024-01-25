@@ -5,6 +5,8 @@ import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -16,7 +18,9 @@ import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 public class UpdateCategoryUseCaseTest {
+    @InjectMocks
     private DefaultUpdateCategoryUseCase useCase;
+    @Mock
     private CategoryGateway categoryGateway;
 
     @Test
