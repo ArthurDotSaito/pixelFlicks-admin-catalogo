@@ -1,5 +1,6 @@
 package com.pixelflicks.admin.catalogo.application.category.update;
 
+import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryCommand;
 import com.pixelflicks.admin.catalogo.domain.category.Category;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
 import org.junit.jupiter.api.Assertions;
@@ -53,6 +54,26 @@ public class UpdateCategoryUseCaseTest {
                     && aCategory.getCreatedAt().isBefore(aUpdatedCategory.getUpdatedAt())
                     && Objects.isNull(aUpdatedCategory.getDeletedAt());
         }));
+    }
+    @Test
+    public void givenAInvalidName_whenCallsUpdateCategory_thenShouldReturnAnDomainException(){
+        final var aCategory = Category.newCategory("Film", null, true);
+        final String expectedName = null;
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+        final var expectedErrorMessage = "A 'name' should not be null";
+        final var expectedErrorCount = 1;
+        final var expectedId = aCategory.getId();
 
+        final var aCommand =  UpdateCategoryCommand.with(expectedId.getValue(), expectedName, expectedDescription, expectedIsActive);
+
+        Mockito.when(categoryGateway.findById(Mockito.eq(expectedId)))
+                .thenReturn(Optional.of(aCategory.clone(aCategory)));
+
+        final var notification = useCase.execute(aCommand).getLeft();
+
+        Assertions.assertEquals(expectedErrorMessage, notification.firstError().message());
+        Assertions.assertEquals(expectedErrorCount, notification.getErrors().size());
+        Mockito.verify(categoryGateway, times(0)).update(Mockito.any());
     }
 }
