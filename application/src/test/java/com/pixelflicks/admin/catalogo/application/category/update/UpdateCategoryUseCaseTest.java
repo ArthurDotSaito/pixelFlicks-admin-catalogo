@@ -1,6 +1,5 @@
 package com.pixelflicks.admin.catalogo.application.category.update;
 
-import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryCommand;
 import com.pixelflicks.admin.catalogo.domain.category.Category;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
 import org.junit.jupiter.api.Assertions;
@@ -31,7 +30,7 @@ public class UpdateCategoryUseCaseTest {
         final var aCommand = UpdateCategoryCommand.with(expectedId.getValue(), expectedName, expectedDescription, expectedIsActive);
 
         Mockito.when(categoryGateway.findById(Mockito.eq(expectedId)))
-                .thenReturn(Optional.of(aCategory));
+                .thenReturn(Optional.of(aCategory.clone(aCategory)));
 
         Mockito.when(categoryGateway.update(Mockito.any()))
                 .thenAnswer(returnsFirstArg());
