@@ -119,7 +119,7 @@ public class UpdateCategoryUseCaseTest {
         final var expectedDescription = "A categoria mais assistida";
         final var expectedIsActive = true;
         final var expectedId = "1234";
-        final var expectedErrorMessage = "Gateway Error";
+        final var expectedErrorMessage = "Category with ID 1234 was not found";
         final var expectedErrorCount = 1;
 
         final var aCommand = UpdateCategoryCommand.with(expectedId, expectedName, expectedDescription, expectedIsActive);
@@ -129,7 +129,8 @@ public class UpdateCategoryUseCaseTest {
 
         final var actualException = Assertions.assertThrows(DomainException.class, () -> useCase.execute(aCommand));
 
-        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());]
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
 
         Mockito.verify(categoryGateway, times(1)).findById(Mockito.eq(CategoryID.from(expectedId)));
 
