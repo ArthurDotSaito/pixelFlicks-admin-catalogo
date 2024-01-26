@@ -3,6 +3,8 @@ package com.pixelflicks.admin.catalogo.application.category.update;
 import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryCommand;
 import com.pixelflicks.admin.catalogo.domain.category.Category;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
+import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
+import com.pixelflicks.admin.catalogo.domain.exceptions.DomainException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +37,7 @@ public class UpdateCategoryUseCaseTest {
         final var aCommand = UpdateCategoryCommand.with(expectedId.getValue(), expectedName, expectedDescription, expectedIsActive);
 
         Mockito.when(categoryGateway.findById(Mockito.eq(expectedId)))
-                .thenReturn(Optional.of(aCategory.clone(aCategory)));
+                .thenReturn(Optional.of(Category.with(aCategory)));
 
         Mockito.when(categoryGateway.update(Mockito.any()))
                 .thenAnswer(returnsFirstArg());
@@ -68,7 +70,7 @@ public class UpdateCategoryUseCaseTest {
         final var aCommand =  UpdateCategoryCommand.with(expectedId.getValue(), expectedName, expectedDescription, expectedIsActive);
 
         Mockito.when(categoryGateway.findById(Mockito.eq(expectedId)))
-                .thenReturn(Optional.of(aCategory.clone(aCategory)));
+                .thenReturn(Optional.of(Category.with(aCategory)));
 
         final var notification = useCase.execute(aCommand).getLeft();
 
@@ -87,7 +89,7 @@ public class UpdateCategoryUseCaseTest {
         final var aCommand = UpdateCategoryCommand.with(expectedId.getValue(), expectedName, expectedDescription, expectedIsActive);
 
         Mockito.when(categoryGateway.findById(Mockito.eq(expectedId)))
-                .thenReturn(Optional.of(aCategory.clone(aCategory)));
+                .thenReturn(Optional.of(Category.with(aCategory)));
 
         Mockito.when(categoryGateway.update(Mockito.any()))
                 .thenAnswer(returnsFirstArg());
@@ -110,4 +112,28 @@ public class UpdateCategoryUseCaseTest {
                     && Objects.nonNull(aUpdatedCategory.getDeletedAt());
         }));
     }
+
+    @Test
+    public void givenACommandWithInvalidID_whenGatewayThrowsAnException_thenShouldReturnNotFoundException(){
+        final var expectedName = "Filmes";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+        final var expectedId = "1234";
+        final var expectedErrorMessage = "Gateway Error";
+        final var expectedErrorCount = 1;
+
+        final var aCommand = UpdateCategoryCommand.with(expectedId, expectedName, expectedDescription, expectedIsActive);
+
+        Mockito.when(categoryGateway.findById(Mockito.eq(CategoryID.from(expectedId))))
+                .thenReturn(Optional.empty());
+
+        final var actualException = Assertions.assertThrows(DomainException.class, () -> useCase.execute(aCommand));
+
+        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());]
+
+        Mockito.verify(categoryGateway, times(1)).findById(Mockito.eq(CategoryID.from(expectedId)));
+
+        Mockito.verify(categoryGateway, times(0)).update(Mockito.any());
+    }
+
 }
