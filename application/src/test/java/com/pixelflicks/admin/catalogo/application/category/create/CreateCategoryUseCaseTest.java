@@ -3,6 +3,7 @@ package com.pixelflicks.admin.catalogo.application.category.create;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
 import com.pixelflicks.admin.catalogo.domain.exceptions.DomainException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +23,11 @@ public class CreateCategoryUseCaseTest {
     private DefaultCreateCategoryUseCase useCase;
     @Mock
     private CategoryGateway categoryGateway;
+
+    @BeforeEach
+    void cleanUp(){
+        Mockito.reset(categoryGateway);
+    }
     @Test
     public void givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId(){
         final var expectedName = "Filmes";
