@@ -1,4 +1,4 @@
-package com.pixelflicks.admin.catalogo.application.category.retrieve;
+package com.pixelflicks.admin.catalogo.application.category.retrieve.get;
 
 import com.pixelflicks.admin.catalogo.domain.category.Category;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
