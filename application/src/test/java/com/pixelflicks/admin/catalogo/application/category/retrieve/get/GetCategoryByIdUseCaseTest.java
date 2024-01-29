@@ -49,12 +49,12 @@ public class GetCategoryByIdUseCaseTest {
         Assertions.assertEquals(expectedIsActive, actualCategory.isActive());
         Assertions.assertEquals(aCategory.getCreatedAt(), actualCategory.createdAt());
         Assertions.assertEquals(aCategory.getUpdatedAt(), actualCategory.updatedAt());
-        Assertions.assertNull(aCategory.getDeletedAt(), actualCategory.deletedAt());
+        Assertions.assertEquals(aCategory.getDeletedAt(), actualCategory.deletedAt());
     }
 
     @Test
     public void givenAInvalidId_whenCallsGetCategory_shouldReturnNotFound(){
-        final var expectedErrorMessage = " "
+        final var expectedErrorMessage = "Category with ID 12345 was not found";
         final var expectedId = CategoryID.from("12345");
 
         Mockito.when(categoryGateway.findById(Mockito.eq(expectedId)))
@@ -69,7 +69,7 @@ public class GetCategoryByIdUseCaseTest {
     }
     @Test
     public void givenAValidId_whenGatewayThrowsException_shouldReturnException(){
-        final var expectedErrorMessage = "Gateway Error"
+        final var expectedErrorMessage = "Gateway Error";
         final var expectedId = CategoryID.from("12345");
 
         Mockito.when(categoryGateway.findById(Mockito.eq(expectedId)))
