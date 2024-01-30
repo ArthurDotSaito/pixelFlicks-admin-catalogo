@@ -56,9 +56,6 @@ public class ListCategoriesUseCaseTest {
         Assertions.assertEquals(expectedPage, actualResult.page());
         Assertions.assertEquals(expectedPerPage, actualResult.perPage());
         Assertions.assertEquals(categories.size(), actualResult.total());
-
-
-
     }
 
     @Test
