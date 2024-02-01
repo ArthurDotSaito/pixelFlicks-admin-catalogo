@@ -1,0 +1,11 @@
+server:
+  port: 8080
+  compression:
+    enabled: true #Wheter response compression is enabled
+    mime-types: text/html, text/xml, text/plain, text/css, text/javascript, application/javascript, application/json
+    min-size-response-time: 1024 # Minimun content-length valur required for compression start.
+
+  undertow:
+    threads:
+      worker: 64 #Generally, this should be reasonably high, at least 10 per core.
+      io: 4 # One I/O thread per CPU core is a reasoble default.
