@@ -7,5 +7,5 @@ server:
 
   undertow:
     threads:
-      worker: 64 #Generally, this should be reasonably high, at least 10 per core.
-      io: 4 # One I/O thread per CPU core is a reasoble default.
+      worker: 20 #Generally, this should be reasonably high, at least 10 per core.
+      io: 2 # One I/O thread per CPU core is a reasoble default.
