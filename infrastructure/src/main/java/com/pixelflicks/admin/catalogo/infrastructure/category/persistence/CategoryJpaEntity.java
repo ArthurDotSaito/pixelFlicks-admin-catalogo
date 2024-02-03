@@ -16,19 +16,15 @@ public class CategoryJpaEntity {
     private String id;
     @Column(name = "name", length = 255, nullable = false)
     private String name;
-
     @Column(name = "description", length = 4000)
     private String description;
-
     @Column(name = "active", nullable = false)
     private boolean active;
-
     @Column(name = "created_at", nullable = false, columnDefinition = "DATETIME(6)")
     private Instant createdAt;
-
     @Column(name = "updated_at", nullable = false, columnDefinition = "DATETIME(6)")
     private Instant updatedAt;
-    @Column(name = "deleted_at", nullable = false, columnDefinition = "DATETIME(6)")
+    @Column(name = "deleted_at", columnDefinition = "DATETIME(6)")
     private Instant deletedAt;
 
     public CategoryJpaEntity(){}
@@ -58,12 +54,12 @@ public class CategoryJpaEntity {
                 aCategory.isActive(),
                 aCategory.getCreatedAt(),
                 aCategory.getUpdatedAt(),
-                aCategory.getUpdatedAt()
+                aCategory.getDeletedAt()
         );
     }
 
     public Category toAggregate(){
-        return Category.with(CategoryID.from(getId()), getName(), getDescription(), isActive(), getCreatedAt(), getDeletedAt(), getUpdatedAt());
+        return Category.with(CategoryID.from(getId()), getName(), getDescription(), isActive(), getCreatedAt(), getUpdatedAt(),getDeletedAt());
     }
 
     public String getId() {
