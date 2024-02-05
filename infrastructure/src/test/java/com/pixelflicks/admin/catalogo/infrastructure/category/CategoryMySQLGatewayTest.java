@@ -42,5 +42,17 @@ public class CategoryMySQLGatewayTest {
         Assertions.assertEquals(aCategory.getUpdatedAt(), actualCategory.getUpdatedAt());
         Assertions.assertEquals(aCategory.getDeletedAt(), actualCategory.getDeletedAt());
         Assertions.assertNull( actualCategory.getDeletedAt());
+
+        final var actualEntity = categoryRepository.findById(aCategory.getId().getValue()).get();
+
+        Assertions.assertEquals(aCategory.getId().getValue(), actualEntity.getId());
+        Assertions.assertEquals(expectedName, actualEntity.getName());
+        Assertions.assertEquals(expectedDescription, actualEntity.getDescription());
+        Assertions.assertEquals(expectedIsActive, actualEntity.isActive());
+        Assertions.assertEquals(aCategory.getCreatedAt(), actualEntity.getCreatedAt());
+        Assertions.assertEquals(aCategory.getUpdatedAt(), actualEntity.getUpdatedAt());
+        Assertions.assertEquals(aCategory.getDeletedAt(), actualEntity.getDeletedAt());
+        Assertions.assertNull( actualEntity.getDeletedAt());
+
     }
 }
