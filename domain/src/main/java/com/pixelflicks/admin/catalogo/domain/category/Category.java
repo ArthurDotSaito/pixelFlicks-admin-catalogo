@@ -4,6 +4,7 @@ import com.pixelflicks.admin.catalogo.domain.AggregateRoot;
 import com.pixelflicks.admin.catalogo.domain.validation.ValidationHandler;
 
 import java.time.Instant;
+import java.util.Objects;
 
 public class Category extends AggregateRoot<CategoryID> implements Cloneable{
     private String name;
@@ -24,8 +25,8 @@ public class Category extends AggregateRoot<CategoryID> implements Cloneable{
         this.name = aName;
         this.description = aDescription;
         this.active = aIsActive;
-        this.createdAt = aCreationDate;
-        this.updatedAt = aUpdateDDate;
+        this.createdAt = Objects.requireNonNull(aCreationDate, "'createdAt' should be not null");
+        this.updatedAt = Objects.requireNonNull(aUpdateDDate,"'updatedAt' should be not null");
         this.deletedAt = aDeleteDate;
     }
 
