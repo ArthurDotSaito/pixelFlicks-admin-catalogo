@@ -7,14 +7,17 @@ import com.pixelflicks.admin.catalogo.domain.category.CategorySearchQuery;
 import com.pixelflicks.admin.catalogo.domain.pagination.Pagination;
 import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity;
 import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.CategoryRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.*;
 import java.util.Optional;
 
 @Service
 public class CategoryMySQLGateway implements CategoryGateway {
     private final CategoryRepository repository;
-
     public CategoryMySQLGateway(final CategoryRepository repository) {
         this.repository = repository;
     }
@@ -43,7 +46,21 @@ public class CategoryMySQLGateway implements CategoryGateway {
     }
 
     @Override
-    public Pagination<Category> findAll(CategorySearchQuery aQuery) {
+    public Pagination<Category> findAll(final CategorySearchQuery aQuery) {
+        final var page = PageRequest.of(
+                aQuery.page(),
+                aQuery.perPage(),
+                Sort.by(Sort.Direction.fromString(aQuery.direction()), aQuery.sort()));
+
+        final var specifications = Optional.ofNullable(aQuery.terms())
+                .filter(str -> !str.isBlank())
+                .map(str ->{
+                    return (Specification<CategoryJpaEntity>) (root, query, cb) ->
+                            cb.like(cb.upper(root.get("name")), "%" + str.toUpperCase() + "%");
+                })
+                .orElse(null);
+
+        this.repository.findAll(Specification.where(specifications), page);
         return null;
     }
 
