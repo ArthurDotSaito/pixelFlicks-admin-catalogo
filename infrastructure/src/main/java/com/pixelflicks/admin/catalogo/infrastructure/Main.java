@@ -1,6 +1,10 @@
 package com.pixelflicks.admin.catalogo.infrastructure;
 
 import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryUseCase;
+import com.pixelflicks.admin.catalogo.application.category.delete.DeleteCategoryUseCase;
+import com.pixelflicks.admin.catalogo.application.category.retrieve.get.GetCategoryByIdUseCase;
+import com.pixelflicks.admin.catalogo.application.category.retrieve.list.ListCategoriesUseCase;
+import com.pixelflicks.admin.catalogo.application.category.update.UpdateCategoryUseCase;
 import com.pixelflicks.admin.catalogo.domain.category.Category;
 import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity;
 import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.CategoryRepository;
@@ -26,7 +30,13 @@ public class Main {
 
     @Bean
     @DependsOnDatabaseInitialization
-    ApplicationRunner runner(@Autowired CreateCategoryUseCase createCategoryUseCase){
+    ApplicationRunner runner(
+            @Autowired CreateCategoryUseCase createCategoryUseCase,
+            @Autowired UpdateCategoryUseCase updateCategoryUseCase,
+            @Autowired DeleteCategoryUseCase deleteCategoryUseCase,
+            @Autowired ListCategoriesUseCase listCategoriesUseCase,
+            @Autowired GetCategoryByIdUseCase getCategoryByIdUseCase
+            ){
         return args -> {
 
         };
