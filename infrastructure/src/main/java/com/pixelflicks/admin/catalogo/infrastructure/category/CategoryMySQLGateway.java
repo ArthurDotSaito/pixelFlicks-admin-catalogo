@@ -61,8 +61,13 @@ public class CategoryMySQLGateway implements CategoryGateway {
                 )
                 .orElse(null);
 
-        this.repository.findAll(Specification.where(specifications), page);
-        return null;
+        final var pageResult = this.repository.findAll(Specification.where(specifications), page);
+        return new Pagination<>(
+                pageResult.getNumber(),
+                pageResult.getSize(),
+                pageResult.getTotalElements(),
+                pageResult.map(CategoryJpaEntity::toAggregate).toList()
+        );
     }
 
     private Category save(final Category aCategory){
