@@ -152,7 +152,7 @@ public class CategoryMySQLGatewayTest {
         Assertions.assertEquals(0, categoryRepository.count());
 
         final var actualCategory = categoryGateway.findById(CategoryID.from("empty"));
-        Assertions.assertEquals(1, categoryRepository.count());
+        Assertions.assertEquals(0, categoryRepository.count());
 
         Assertions.assertTrue(actualCategory.isEmpty());
     }
@@ -193,7 +193,7 @@ public class CategoryMySQLGatewayTest {
         Assertions.assertEquals(expectedPage, actualResult.currentPage());
         Assertions.assertEquals(expectedPerPage, actualResult.perPage());
         Assertions.assertEquals(total, actualResult.total());
-        Assertions.assertEquals(expectedPerPage, actualResult.items().size());
+        Assertions.assertEquals(0, actualResult.items().size());
     }
 
     @Test
