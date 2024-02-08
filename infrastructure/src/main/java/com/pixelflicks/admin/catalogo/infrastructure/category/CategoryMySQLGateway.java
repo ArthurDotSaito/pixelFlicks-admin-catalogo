@@ -7,6 +7,7 @@ import com.pixelflicks.admin.catalogo.domain.category.CategorySearchQuery;
 import com.pixelflicks.admin.catalogo.domain.pagination.Pagination;
 import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity;
 import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.CategoryRepository;
+import com.pixelflicks.admin.catalogo.infrastructure.utils.SpecificationUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -54,10 +55,10 @@ public class CategoryMySQLGateway implements CategoryGateway {
 
         final var specifications = Optional.ofNullable(aQuery.terms())
                 .filter(str -> !str.isBlank())
-                .map(str ->{
-                    return (Specification<CategoryJpaEntity>) (root, query, cb) ->
-                            cb.like(cb.upper(root.get("name")), "%" + str.toUpperCase() + "%");
-                })
+                .map(str -> SpecificationUtils
+                        .<CategoryJpaEntity>like("name", str)
+                        .or(SpecificationUtils.like("description", str))
+                )
                 .orElse(null);
 
         this.repository.findAll(Specification.where(specifications), page);
