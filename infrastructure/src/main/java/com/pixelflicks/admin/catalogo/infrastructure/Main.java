@@ -28,6 +28,8 @@ public class Main {
         SpringApplication.run(WebServerConfig.class, args);
     }
 
+    System.out.print("WSL Up test");
+
     @Bean
     @DependsOnDatabaseInitialization
     ApplicationRunner runner(
