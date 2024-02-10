@@ -2,15 +2,13 @@ package com.pixelflicks.admin.catalogo.application.category.create;
 
 import com.pixelflicks.admin.catalogo.IntegrationTest;
 import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.CategoryRepository;
+import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Objects;
-
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Mockito.times;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import static org.mockito.ArgumentMatchers.any;
 
 @IntegrationTest
 public class CreateCategoryUseCaseIT {
@@ -20,6 +18,9 @@ public class CreateCategoryUseCaseIT {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @SpyBean
+    private CategoryGateway categoryGateway;
 
     @Test
     public void givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId(){
@@ -45,5 +46,27 @@ public class CreateCategoryUseCaseIT {
         Assertions.assertNotNull( actualCategory.getCreatedAt());
         Assertions.assertNotNull(actualCategory.getUpdatedAt());
         Assertions.assertNull( actualCategory.getDeletedAt());
+    }
+
+    @Test
+    public void givenAInvalidName_whenCallsCreateCategory_thenShouldReturnAnDomainException(){
+        final String expectedName = null;
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+        final var expectedErrorMessage = "A 'name' should not be null";
+        final var expectedErrorCount = 1;
+
+        Assertions.assertEquals(0, categoryRepository.count());
+
+        final var aCommand =  CreateCategoryCommand.with(expectedName, expectedDescription, expectedIsActive);
+
+        final var notification = useCase.execute(aCommand).getLeft();
+
+        Assertions.assertEquals(expectedErrorMessage, notification.firstError().message());
+        Assertions.assertEquals(expectedErrorCount, notification.getErrors().size());
+
+        Assertions.assertEquals(0, categoryRepository.count());
+
+        Mockito.verify(categoryGateway, Mockito.times(0)).create(any());
     }
 }
