@@ -3,7 +3,7 @@ package com.pixelflicks.admin.catalogo.infrastructure.category;
 import com.pixelflicks.admin.catalogo.domain.category.Category;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.domain.category.CategorySearchQuery;
-import com.pixelflicks.admin.catalogo.infrastructure.MySQLGatewayTest;
+import com.pixelflicks.admin.catalogo.MySQLGatewayTest;
 import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity;
 import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.CategoryRepository;
 import org.junit.jupiter.api.Assertions;
