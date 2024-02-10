@@ -100,4 +100,22 @@ public class CreateCategoryUseCaseIT {
         Assertions.assertNotNull(actualCategory.getUpdatedAt());
         Assertions.assertNotNull( actualCategory.getDeletedAt());
     }
+
+    @Test
+    public void givenAValidCommand_whenGatewayThrowsAnException_thenShouldReturnAnException(){
+        final String expectedName = "Filmes";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+        final var expectedErrorMessage = "Gateway Error";
+        final var expectedErrorCount = 1;
+
+        final var aCommand =  CreateCategoryCommand.with(expectedName, expectedDescription, expectedIsActive);
+
+        Mockito.doThrow(new IllegalStateException(expectedErrorMessage)).when(categoryGateway).create(any());
+
+        final var notification = useCase.execute(aCommand).getLeft();
+
+        Assertions.assertEquals(expectedErrorMessage, notification.firstError().message());
+        Assertions.assertEquals(expectedErrorCount, notification.getErrors().size());
+    }
 }
