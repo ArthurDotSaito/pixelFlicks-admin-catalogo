@@ -8,7 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+
+import java.util.Objects;
+
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 
 @IntegrationTest
 public class CreateCategoryUseCaseIT {
@@ -68,5 +73,31 @@ public class CreateCategoryUseCaseIT {
         Assertions.assertEquals(0, categoryRepository.count());
 
         Mockito.verify(categoryGateway, Mockito.times(0)).create(any());
+    }
+
+    @Test
+    public void givenAValidCommandWithInactiveCategory_whenCallsCreateCategory_thenShouldReturnInactiveCategoryId(){
+        final String expectedName = "Filmes";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = false;
+
+        Assertions.assertEquals(0, categoryRepository.count());
+        final var aCommand =  CreateCategoryCommand.with(expectedName, expectedDescription, expectedIsActive);
+
+        final var actualOutput = useCase.execute(aCommand).get();
+
+        Assertions.assertNotNull(actualOutput);
+        Assertions.assertNotNull(actualOutput.id());
+
+        Assertions.assertEquals(1, categoryRepository.count());
+
+        final var actualCategory = categoryRepository.findById(actualOutput.id().getValue()).get();
+
+        Assertions.assertEquals(expectedName, actualCategory.getName());
+        Assertions.assertEquals(expectedDescription, actualCategory.getDescription());
+        Assertions.assertEquals(expectedIsActive, actualCategory.isActive());
+        Assertions.assertNotNull( actualCategory.getCreatedAt());
+        Assertions.assertNotNull(actualCategory.getUpdatedAt());
+        Assertions.assertNotNull( actualCategory.getDeletedAt());
     }
 }
