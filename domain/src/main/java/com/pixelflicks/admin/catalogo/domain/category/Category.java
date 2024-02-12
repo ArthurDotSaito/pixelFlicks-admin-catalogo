@@ -1,8 +1,8 @@
 package com.pixelflicks.admin.catalogo.domain.category;
 
 import com.pixelflicks.admin.catalogo.domain.AggregateRoot;
+import com.pixelflicks.admin.catalogo.domain.utils.InstantUtils;
 import com.pixelflicks.admin.catalogo.domain.validation.ValidationHandler;
-
 import java.time.Instant;
 import java.util.Objects;
 
@@ -32,7 +32,7 @@ public class Category extends AggregateRoot<CategoryID> implements Cloneable{
 
     public static Category newCategory(final String aName, final String aDescription, final boolean aIsActive){
         final var id = CategoryID.unique();
-        final var now = Instant.now();
+        final var now = InstantUtils.now();
         final var deletedAt = aIsActive ? null : now;
         return new Category(id, aName, aDescription, aIsActive, now, now, deletedAt);
     }
@@ -74,16 +74,16 @@ public class Category extends AggregateRoot<CategoryID> implements Cloneable{
     public Category activate(){
         this.deletedAt = null;
         this.active = true;
-        this.updatedAt = Instant.now();
+        this.updatedAt = InstantUtils.now();
         return this;
     }
     public Category deactivate(){
         if(getDeletedAt() == null){
-            this.deletedAt = Instant.now();
+            this.deletedAt = InstantUtils.now();
         }
 
         this.active = false;
-        this.updatedAt = Instant.now();
+        this.updatedAt = InstantUtils.now();
         return this;
     }
 
@@ -96,7 +96,7 @@ public class Category extends AggregateRoot<CategoryID> implements Cloneable{
             deactivate();
         }
 
-        this.updatedAt = Instant.now();
+        this.updatedAt = InstantUtils.now();
         return this;
     }
 
