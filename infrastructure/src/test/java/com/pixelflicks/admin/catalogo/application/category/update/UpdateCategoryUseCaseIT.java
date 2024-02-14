@@ -82,6 +82,37 @@ public class UpdateCategoryUseCaseIT {
         Mockito.verify(categoryGateway, times(0)).update(Mockito.any());
     }
 
+    @Test
+    public void givenAInactivateValidCommand_whenCallsUpdateCategory_shouldReturnInactiveCategoryId(){
+        final var aCategory = Category.newCategory("Film", null, true);
+
+        save(aCategory);
+
+        final var expectedName = "Filmes";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = false;
+        final var expectedId = aCategory.getId();
+
+        final var aCommand = UpdateCategoryCommand.with(expectedId.getValue(), expectedName, expectedDescription, expectedIsActive);
+
+        Assertions.assertTrue(aCategory.isActive());
+        Assertions.assertNull(aCategory.getDeletedAt());
+
+        final var actualOutput = useCase.execute(aCommand).get();
+
+        Assertions.assertNotNull(actualOutput);
+        Assertions.assertNotNull(actualOutput.id());
+
+        final var actualCategory = categoryRepository.findById(expectedId.getValue()).get();
+
+        Assertions.assertEquals(expectedName, actualCategory.getName());
+        Assertions.assertEquals(expectedDescription, actualCategory.getDescription());
+        Assertions.assertEquals(expectedIsActive, actualCategory.isActive());
+        Assertions.assertEquals(aCategory.getCreatedAt(), actualCategory.getCreatedAt());
+        Assertions.assertTrue(aCategory.getCreatedAt().isBefore(actualCategory.getUpdatedAt()));
+        Assertions.assertNotNull(actualCategory.getDeletedAt());
+    }
+
     private void  save(final Category... aCategory){
         categoryRepository.saveAllAndFlush(
                 Arrays.stream(aCategory)
