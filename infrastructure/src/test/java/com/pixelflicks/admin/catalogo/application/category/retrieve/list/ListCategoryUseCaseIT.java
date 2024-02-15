@@ -91,4 +91,33 @@ public class ListCategoryUseCaseIT {
         Assertions.assertEquals(expectedTotal, actualResult.total());
         Assertions.assertEquals(expectedCategoryName, actualResult.items().get(0).name());
     }
+
+    @ParameterizedTest
+    @CsvSource({
+            "name, asc, 0, 10, 7, 7, Amazon Originals",
+            "name, desc, 0, 10, 7, 7, Series",
+            "createdAt, asc, 0, 10, 7, 7, Filmes",
+            "createdAt, desc, 0, 10, 7, 7, Series",
+    })
+    public void givenAValidSortAndDirection_whenCallsListCategories_thenShouldReturnCategoriesOrdered(
+            final String expectedSort,
+            final String expectedDirection,
+            final int expectedPage,
+            final int expectedPerPage,
+            final int expectedItemsCount,
+            final long expectedTotal,
+            final String expectedCategoryName
+    ){
+        final var expectedTerms = "";
+
+        final var aQuery = new CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection);
+
+        final var actualResult = useCase.execute(aQuery);
+
+        Assertions.assertEquals(expectedItemsCount, actualResult.items().size());
+        Assertions.assertEquals(expectedPage, actualResult.currentPage());
+        Assertions.assertEquals(expectedPerPage, actualResult.perPage());
+        Assertions.assertEquals(expectedTotal, actualResult.total());
+        Assertions.assertEquals(expectedCategoryName, actualResult.items().get(0).name());
+    }
 }
