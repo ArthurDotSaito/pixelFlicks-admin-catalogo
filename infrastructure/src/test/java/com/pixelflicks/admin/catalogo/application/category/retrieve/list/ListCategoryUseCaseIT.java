@@ -8,6 +8,8 @@ import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.Catego
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -30,7 +32,7 @@ public class ListCategoryUseCaseIT {
                 Category.newCategory("Netflix Originals", "Titulos de autoria da Netflix", true),
                 Category.newCategory("Amazon Originals", "Titulos de autoria da Amazon Prime", true),
                 Category.newCategory("Documentarios", null, true),
-                Category.newCategory("Kids", null, true),
+                Category.newCategory("Kids", "Categoria para crianças", true),
                 Category.newCategory("Series", null, true)
         )
                 .map(CategoryJpaEntity::from)
@@ -57,6 +59,36 @@ public class ListCategoryUseCaseIT {
         Assertions.assertEquals(expectedPage, actualResult.currentPage());
         Assertions.assertEquals(expectedPerPage, actualResult.perPage());
         Assertions.assertEquals(expectedTotal, actualResult.total());
+    }
 
+    @ParameterizedTest
+    @CsvSource({
+            "fil,0,10,1,1,Filmes",
+            "net,0,10,1,1,Netflix Originals",
+            "ZON,0,10,1,1,Amazon Originals",
+            "KI,0,10,1,1,Kids",
+            "crian,0,10,1,1,Kids",
+            "da Ama,0,10,1,1,Amazon Originals",
+    })
+    public void givenAValidTerm_whenCallsListCategories_shouldReturnCategoriesFiltered(
+            final String expectedTerms,
+            final int expectedPage,
+            final int expectedPerPage,
+            final int expectedItemsCount,
+            final long expectedTotal,
+            final String expectedCategoryName
+    ){
+        final var expectedSort = "name";
+        final var expectedDirection = "asc";
+
+        final var aQuery = new CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection);
+
+        final var actualResult = useCase.execute(aQuery);
+
+        Assertions.assertEquals(expectedItemsCount, actualResult.items().size());
+        Assertions.assertEquals(expectedPage, actualResult.currentPage());
+        Assertions.assertEquals(expectedPerPage, actualResult.perPage());
+        Assertions.assertEquals(expectedTotal, actualResult.total());
+        Assertions.assertEquals(expectedCategoryName, actualResult.items().get(0).name());
     }
 }
