@@ -120,4 +120,39 @@ public class ListCategoryUseCaseIT {
         Assertions.assertEquals(expectedTotal, actualResult.total());
         Assertions.assertEquals(expectedCategoryName, actualResult.items().get(0).name());
     }
+
+    @ParameterizedTest
+    @CsvSource({
+            "0, 2, 2, 7, Amazon Originals;Documentarios",
+            "1, 2, 2, 7, Filmes;Kids",
+            "2, 2, 2, 7, Netflix Originals;PixelFlix Originals",
+            "3, 2, 1, 7, Series"
+    })
+    public void givenAValidPage_whenCallsListCategories_shouldReturnCategoriesPaginated(
+            final int expectedPage,
+            final int expectedPerPage,
+            final int expectedItemsCount,
+            final long expectedTotal,
+            final String expectedCategoriesName
+    ){
+        final var expectedSort = "name";
+        final var expectedDirection = "asc";
+        final var expectedTerms = "";
+
+        final var aQuery = new CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection);
+
+        final var actualResult = useCase.execute(aQuery);
+
+        Assertions.assertEquals(expectedItemsCount, actualResult.items().size());
+        Assertions.assertEquals(expectedPage, actualResult.currentPage());
+        Assertions.assertEquals(expectedPerPage, actualResult.perPage());
+        Assertions.assertEquals(expectedTotal, actualResult.total());
+
+        int index = 0;
+        for (final String expectedName : expectedCategoriesName.split(";")) {
+            final var actualName =  actualResult.items().get(index).name();
+            Assertions.assertEquals(expectedName, actualName);
+            index++;
+        }
+    }
 }
