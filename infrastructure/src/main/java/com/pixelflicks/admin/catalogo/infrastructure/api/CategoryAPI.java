@@ -1,5 +1,6 @@
 package com.pixelflicks.admin.catalogo.infrastructure.api;
 
+import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryUseCase;
 import com.pixelflicks.admin.catalogo.domain.pagination.Pagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
