@@ -2,17 +2,11 @@ package com.pixelflicks.admin.catalogo.infrastructure.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pixelflicks.admin.catalogo.ControllerTest;
-import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryCommand;
 import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryOutput;
 import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryUseCase;
-import com.pixelflicks.admin.catalogo.application.category.retrieve.get.CategoryOutput;
-import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.CreateCategoryApiInput;
 import io.vavr.API;
-import jdk.jfr.ContentType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -30,6 +24,7 @@ public class CategoryApiTest {
     @Autowired
     private MockMvc mvc;
 
+    @Autowired
     private ObjectMapper mapper;
 
     @MockBean
@@ -44,7 +39,7 @@ public class CategoryApiTest {
         final var aInput = new CreateCategoryApiInput(expectedName, expectedDescription, expectedIsActive);
 
         Mockito.when(createCategoryUseCase.execute(Mockito.any()))
-                .thenReturn(API.Right(CreateCategoryOutput.from(CategoryID.from("123"))));
+                .thenReturn(API.Right(CreateCategoryOutput.from("123")));
 
         final var request = MockMvcRequestBuilders.post("/categories")
                 .contentType(MediaType.APPLICATION_JSON)
