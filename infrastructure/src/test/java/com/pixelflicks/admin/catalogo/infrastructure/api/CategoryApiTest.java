@@ -174,19 +174,18 @@ public class CategoryApiTest {
     }
 
     @Test
-    public void givenAInvalidId_whenCallsGetCategory_shouldReturnNotFound(){
+    public void givenAInvalidId_whenCallsGetCategory_shouldReturnNotFound() throws Exception{
+        //given
         final var expectedErrorMessage = "Category with ID 12345 was not found";
-        final var expectedId = CategoryID.from("12345");
+        final var expectedId = CategoryID.from("12345").getValue();
 
-        when(categoryGateway.findById(eq(expectedId)))
-                .thenReturn(Optional.empty());
+        //when
+        final var request = get("/categories/{id}", expectedId);
+        final var response = this.mvc.perform(request).andDo(log());
 
-        final var actualException = Assertions.assertThrows(
-                DomainException.class,
-                () ->useCase.execute(expectedId.getValue())
-        );
-
-        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
+        //then
+        response.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
     }
 
 
