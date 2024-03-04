@@ -51,6 +51,6 @@ public class CategoryController implements CategoryAPI {
 
     @Override
     public CategoryApiOutput getById(final String id) {
-        return CategoryApiPresenter.present.compose(this.getCategoryByIdUseCase::execute).apply(id);
+        return CategoryApiPresenter.present(this.getCategoryByIdUseCase.execute(id));
     }
 }
