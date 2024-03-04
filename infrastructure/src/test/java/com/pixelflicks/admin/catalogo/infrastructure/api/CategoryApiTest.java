@@ -194,6 +194,4 @@ public class CategoryApiTest {
         response.andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
     }
-
-
 }
