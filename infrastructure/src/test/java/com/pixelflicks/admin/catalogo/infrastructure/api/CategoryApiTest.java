@@ -125,6 +125,7 @@ public class CategoryApiTest {
 
         //when
         final var request = post("/categories")
+                .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(aInput));
 
@@ -157,7 +158,9 @@ public class CategoryApiTest {
                         .thenReturn(CategoryOutput.from(aCategory));
 
         //when
-        final var request = get("/categories/{id}", expectedId).contentType(MediaType.APPLICATION_JSON);
+        final var request = get("/categories/{id}", expectedId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
         final var response = this.mvc.perform(request).andDo(log());
 
         //then
