@@ -3,10 +3,13 @@ package com.pixelflicks.admin.catalogo.infrastructure.api.controllers;
 import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryCommand;
 import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryOutput;
 import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryUseCase;
+import com.pixelflicks.admin.catalogo.application.category.retrieve.get.GetCategoryByIdUseCase;
 import com.pixelflicks.admin.catalogo.domain.pagination.Pagination;
 import com.pixelflicks.admin.catalogo.domain.validation.handler.Notification;
 import com.pixelflicks.admin.catalogo.infrastructure.api.CategoryAPI;
+import com.pixelflicks.admin.catalogo.infrastructure.category.models.CategoryApiOutput;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.CreateCategoryApiInput;
+import com.pixelflicks.admin.catalogo.infrastructure.category.presenters.CategoryApiPresenter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,9 +20,11 @@ import java.util.function.Function;
 @RestController
 public class CategoryController implements CategoryAPI {
     private final CreateCategoryUseCase createCategoryUsecase;
+    private final GetCategoryByIdUseCase getCategoryByIdUseCase;
 
-    public CategoryController(final CreateCategoryUseCase createCategoryUsecase){
+    public CategoryController(final CreateCategoryUseCase createCategoryUsecase,GetCategoryByIdUseCase getCategoryByIdUseCase){
         this.createCategoryUsecase = Objects.requireNonNull(createCategoryUsecase);
+        this.getCategoryByIdUseCase = Objects.requireNonNull(getCategoryByIdUseCase);
     }
     @Override
     public ResponseEntity<?> createCategory(CreateCategoryApiInput input) {
@@ -42,5 +47,10 @@ public class CategoryController implements CategoryAPI {
     @Override
     public Pagination<?> listCategories(String search, int page, int perPage, String sort, String direction) {
         return null;
+    }
+
+    @Override
+    public CategoryApiOutput getById(final String id) {
+        return CategoryApiPresenter.present.compose(this.getCategoryByIdUseCase::execute).apply(id);
     }
 }
