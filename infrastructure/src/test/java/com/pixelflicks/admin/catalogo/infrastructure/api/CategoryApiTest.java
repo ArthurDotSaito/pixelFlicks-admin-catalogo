@@ -157,7 +157,7 @@ public class CategoryApiTest {
                         .thenReturn(CategoryOutput.from(aCategory));
 
         //when
-        final var request = get("/categories/{id}", expectedId);
+        final var request = get("/categories/{id}", expectedId).contentType(MediaType.APPLICATION_JSON);
         final var response = this.mvc.perform(request).andDo(log());
 
         //then
@@ -167,9 +167,9 @@ public class CategoryApiTest {
                 .andExpect(jsonPath("$.name", equalTo(expectedName)))
                 .andExpect(jsonPath("$.description", equalTo(expectedDescription)))
                 .andExpect(jsonPath("$.is_active", equalTo(expectedIsActive)))
-                .andExpect(jsonPath("$.createdAt", equalTo(aCategory.getCreatedAt().toString())))
-                .andExpect(jsonPath("$.updatedAt", equalTo(aCategory.getUpdatedAt().toString())))
-                .andExpect(jsonPath("$.deletedAt", equalTo(aCategory.getDeletedAt()))
+                .andExpect(jsonPath("$.created_at", equalTo(aCategory.getCreatedAt().toString())))
+                .andExpect(jsonPath("$.updated_at", equalTo(aCategory.getUpdatedAt().toString())))
+                .andExpect(jsonPath("$.deleted_at", equalTo(aCategory.getDeletedAt()))
                 );
 
     }
@@ -179,6 +179,9 @@ public class CategoryApiTest {
         //given
         final var expectedErrorMessage = "Category with ID 12345 was not found";
         final var expectedId = CategoryID.from("12345").getValue();
+
+        when(createCategoryUseCase.execute(any()))
+                .thenThrow(DomainException.with(new Error("Category with ID %s was not found".formatted(expectedId))));
 
         //when
         final var request = get("/categories/{id}", expectedId);
