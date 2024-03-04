@@ -9,6 +9,7 @@ import com.pixelflicks.admin.catalogo.application.category.retrieve.get.GetCateg
 import com.pixelflicks.admin.catalogo.domain.category.Category;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.domain.exceptions.DomainException;
+import com.pixelflicks.admin.catalogo.domain.exceptions.NotFoundException;
 import com.pixelflicks.admin.catalogo.domain.validation.Error;
 import com.pixelflicks.admin.catalogo.domain.validation.handler.Notification;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.CreateCategoryApiInput;
@@ -181,13 +182,16 @@ public class CategoryApiTest {
     public void givenAInvalidId_whenCallsGetCategory_shouldReturnNotFound() throws Exception{
         //given
         final var expectedErrorMessage = "Category with ID 12345 was not found";
-        final var expectedId = CategoryID.from("12345").getValue();
+        final var expectedId = CategoryID.from("12345");
 
-        when(createCategoryUseCase.execute(any()))
-                .thenThrow(DomainException.with(new Error("Category with ID %s was not found".formatted(expectedId))));
+        when(getCategoryByIdUseCase.execute(any()))
+                .thenThrow(NotFoundException.with(Category.class, expectedId));
 
         //when
-        final var request = get("/categories/{id}", expectedId);
+        final var request = get("/categories/{id}", expectedId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
         final var response = this.mvc.perform(request).andDo(log());
 
         //then
