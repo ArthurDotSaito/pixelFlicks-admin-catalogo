@@ -42,4 +42,16 @@ public interface CategoryAPI {
             @RequestParam(name = "sort", required = false, defaultValue = "name") final String sort,
             @RequestParam(name = "dir", required = false, defaultValue = "asc") final String direction
     );
+
+    @GetMapping(value = "{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "Get a category by it's identifier")
+    @ApiResponses(value={
+            @ApiResponse(responseCode = "200", description = "Category retrieved successfully"),
+            @ApiResponse(responseCode = "422", description = "Category was not found"),
+            @ApiResponse(responseCode = "422", description = "Internal server error"),
+    })
+    CategoryApiOutput.getById();
 }
