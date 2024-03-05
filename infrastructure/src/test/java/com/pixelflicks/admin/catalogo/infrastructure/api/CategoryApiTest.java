@@ -245,7 +245,7 @@ public class CategoryApiTest {
         final var expectedDescription = "A categoria mais assistida";
         final var expectedIsActive = true;
 
-        final var expectedErrorMessage = "A 'name' should not be null";
+        final var expectedErrorMessage = "Category with Id not-found was not found";
         final var expectedErrorCount = 1;
 
         when(updateCategoryUseCase.execute(any()))
