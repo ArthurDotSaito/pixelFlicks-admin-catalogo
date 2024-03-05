@@ -236,4 +236,40 @@ public class CategoryApiTest {
                         && Objects.equals(expectedIsActive, cmd.isActive())
         ));
     }
+
+    @Test
+    public void givenAInvalidName_whenCallsUpdateCategory_thenShouldReturnAnDomainException() throws Exception{
+        //given
+        final var expectedId = "not-found";
+        final var expectedName = "Filmes";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+
+        final var expectedErrorMessage = "A 'name' should not be null";
+        final var expectedErrorCount = 1;
+
+        when(updateCategoryUseCase.execute(any()))
+                .thenThrow(NotFoundException.with(Category.class, CategoryID.from(expectedId)));
+
+        final var aCommand = new UpdateCategoryApiInput(expectedName, expectedDescription, expectedIsActive);
+
+        //when
+        final var request = put("/categories/{id}", expectedId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(aCommand));
+
+        final var response = this.mvc.perform(request).andDo(log());
+
+        //then
+        response.andExpect(status().isNotFound())
+                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+
+        verify(updateCategoryUseCase, times(1)).execute(argThat(cmd ->
+                Objects.equals(expectedName, cmd.name())
+                        && Objects.equals(expectedDescription, cmd.description())
+                        && Objects.equals(expectedIsActive, cmd.isActive())
+        ));
+    }
 }

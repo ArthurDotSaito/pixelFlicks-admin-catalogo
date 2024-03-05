@@ -4,6 +4,7 @@ import com.pixelflicks.admin.catalogo.domain.category.Category;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.domain.exceptions.DomainException;
+import com.pixelflicks.admin.catalogo.domain.exceptions.NotFoundException;
 import com.pixelflicks.admin.catalogo.domain.validation.Error;
 import com.pixelflicks.admin.catalogo.domain.validation.handler.Notification;
 import io.vavr.API;
@@ -41,6 +42,6 @@ public class DefaultUpdateCategoryUseCase extends UpdateCategoryUseCase{
     }
 
     private static Supplier<DomainException> notFound(CategoryID anId) {
-        return () -> DomainException.with(new Error("Category with ID %s was not found".formatted(anId.getValue())));
+        return () -> NotFoundException.with(Category.class, anId);
     }
 }
