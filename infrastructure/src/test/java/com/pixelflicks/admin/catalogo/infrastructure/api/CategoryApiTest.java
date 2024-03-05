@@ -6,6 +6,8 @@ import com.pixelflicks.admin.catalogo.application.category.create.CreateCategory
 import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryUseCase;
 import com.pixelflicks.admin.catalogo.application.category.retrieve.get.CategoryOutput;
 import com.pixelflicks.admin.catalogo.application.category.retrieve.get.GetCategoryByIdUseCase;
+import com.pixelflicks.admin.catalogo.application.category.update.UpdateCategoryOutput;
+import com.pixelflicks.admin.catalogo.application.category.update.UpdateCategoryUseCase;
 import com.pixelflicks.admin.catalogo.domain.category.Category;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.domain.exceptions.DomainException;
@@ -13,6 +15,7 @@ import com.pixelflicks.admin.catalogo.domain.exceptions.NotFoundException;
 import com.pixelflicks.admin.catalogo.domain.validation.Error;
 import com.pixelflicks.admin.catalogo.domain.validation.handler.Notification;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.CreateCategoryApiInput;
+import com.pixelflicks.admin.catalogo.infrastructure.category.models.UpdateCategoryApiInput;
 import io.vavr.API;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -46,6 +49,9 @@ public class CategoryApiTest {
 
     @MockBean
     private GetCategoryByIdUseCase getCategoryByIdUseCase;
+
+    @MockBean
+    private UpdateCategoryUseCase updateCategoryUseCase;
 
     @Test
     public void givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId() throws Exception{
@@ -197,5 +203,36 @@ public class CategoryApiTest {
         //then
         response.andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+    }
+
+    @Test
+    public void givenAValidCommand_whenCallsUpdateCategory_shouldReturnCategoryId() throws Exception{
+        //given
+        final var expectedId = "123";
+        final var expectedName = "Filmes";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+
+        when(updateCategoryUseCase.execute(any()))
+                .thenReturn(API.Right(UpdateCategoryOutput.from(expectedId)));
+
+        final var aCommand = new UpdateCategoryApiInput(expectedName, expectedDescription, expectedIsActive);
+        //when
+        final var request = put("/categories/{id}", expectedId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(aCommand));
+
+
+        final var response = this.mvc.perform(request).andDo(log());
+        //then
+        response.andExpect(status().isNoContent())
+                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE));
+
+        verify(updateCategoryUseCase, times(1)).execute(argThat(cmd ->
+                Objects.equals(expectedName, cmd.name())
+                        && Objects.equals(expectedDescription, cmd.description())
+                        && Objects.equals(expectedIsActive, cmd.isActive())
+        ));
     }
 }
