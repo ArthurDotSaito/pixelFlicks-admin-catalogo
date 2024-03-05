@@ -3,6 +3,7 @@ package com.pixelflicks.admin.catalogo.infrastructure.api;
 import com.pixelflicks.admin.catalogo.domain.pagination.Pagination;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.CategoryApiOutput;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.CreateCategoryApiInput;
+import com.pixelflicks.admin.catalogo.infrastructure.category.models.UpdateCategoryApiInput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -55,4 +56,17 @@ public interface CategoryAPI {
             @ApiResponse(responseCode = "422", description = "Internal server error"),
     })
     CategoryApiOutput getById(@PathVariable(name = "id") String id);
+
+
+    @PutMapping(value = "{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "Update a category by it's identifier")
+    @ApiResponses(value={
+            @ApiResponse(responseCode = "200", description = "Category updated successfully"),
+            @ApiResponse(responseCode = "422", description = "Category was not found"),
+            @ApiResponse(responseCode = "422", description = "Internal server error"),
+    })
+    ResponseEntity<?> updateById(@PathVariable(name = "id") String id, @RequestBody UpdateCategoryApiInput input);
 }
