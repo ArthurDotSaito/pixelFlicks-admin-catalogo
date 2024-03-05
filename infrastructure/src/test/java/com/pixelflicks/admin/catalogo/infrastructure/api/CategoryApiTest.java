@@ -226,7 +226,7 @@ public class CategoryApiTest {
 
         final var response = this.mvc.perform(request).andDo(log());
         //then
-        response.andExpect(status().isNoContent())
+        response.andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.id", equalTo(expectedId)));
 
