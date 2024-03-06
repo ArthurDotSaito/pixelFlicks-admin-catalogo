@@ -1,10 +1,9 @@
 package com.pixelflicks.admin.catalogo.application.category.update;
 
-import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryCommand;
 import com.pixelflicks.admin.catalogo.domain.category.Category;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
-import com.pixelflicks.admin.catalogo.domain.exceptions.DomainException;
+import com.pixelflicks.admin.catalogo.domain.exceptions.NotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,7 +62,7 @@ public class UpdateCategoryUseCaseTest {
         }));
     }
     @Test
-    public void givenAInvalidName_whenCallsUpdateCategory_thenShouldReturnAnDomainException(){
+    public void givenAInvalidName_whenCallsUpdateCategory_thenShouldReturnAnNotification(){
         final var aCategory = Category.newCategory("Film", null, true);
         final String expectedName = null;
         final var expectedDescription = "A categoria mais assistida";
@@ -124,7 +123,7 @@ public class UpdateCategoryUseCaseTest {
         final var expectedDescription = "A categoria mais assistida";
         final var expectedIsActive = true;
         final var expectedId = "1234";
-        final var expectedErrorMessage = "Category with ID 1234 was not found";
+        final var expectedErrorMessage = "Category with Id 1234 was not found";
         final var expectedErrorCount = 1;
 
         final var aCommand = UpdateCategoryCommand.with(expectedId, expectedName, expectedDescription, expectedIsActive);
@@ -132,10 +131,9 @@ public class UpdateCategoryUseCaseTest {
         Mockito.when(categoryGateway.findById(Mockito.eq(CategoryID.from(expectedId))))
                 .thenReturn(Optional.empty());
 
-        final var actualException = Assertions.assertThrows(DomainException.class, () -> useCase.execute(aCommand));
+        final var actualException = Assertions.assertThrows(NotFoundException.class, () -> useCase.execute(aCommand));
 
-        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
-        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
 
         Mockito.verify(categoryGateway, times(1)).findById(Mockito.eq(CategoryID.from(expectedId)));
 

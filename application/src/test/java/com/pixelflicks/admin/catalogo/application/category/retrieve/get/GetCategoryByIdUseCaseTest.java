@@ -54,7 +54,7 @@ public class GetCategoryByIdUseCaseTest {
 
     @Test
     public void givenAInvalidId_whenCallsGetCategory_shouldReturnNotFound(){
-        final var expectedErrorMessage = "Category with ID 12345 was not found";
+        final var expectedErrorMessage = "Category with Id 12345 was not found";
         final var expectedId = CategoryID.from("12345");
 
         Mockito.when(categoryGateway.findById(Mockito.eq(expectedId)))
