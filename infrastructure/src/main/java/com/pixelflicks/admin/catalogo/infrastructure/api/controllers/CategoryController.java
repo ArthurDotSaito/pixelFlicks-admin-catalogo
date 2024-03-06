@@ -3,6 +3,7 @@ package com.pixelflicks.admin.catalogo.infrastructure.api.controllers;
 import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryCommand;
 import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryOutput;
 import com.pixelflicks.admin.catalogo.application.category.create.CreateCategoryUseCase;
+import com.pixelflicks.admin.catalogo.application.category.delete.DeleteCategoryUseCase;
 import com.pixelflicks.admin.catalogo.application.category.retrieve.get.GetCategoryByIdUseCase;
 import com.pixelflicks.admin.catalogo.application.category.update.UpdateCategoryCommand;
 import com.pixelflicks.admin.catalogo.application.category.update.UpdateCategoryOutput;
@@ -25,16 +26,18 @@ import java.util.function.Function;
 public class CategoryController implements CategoryAPI {
     private final CreateCategoryUseCase createCategoryUsecase;
     private final GetCategoryByIdUseCase getCategoryByIdUseCase;
-
     private final UpdateCategoryUseCase updateCategoryUseCase;
+    private final DeleteCategoryUseCase deleteCategoryUseCase;
 
     public CategoryController(
             final CreateCategoryUseCase createCategoryUsecase,
             final GetCategoryByIdUseCase getCategoryByIdUseCase,
-            final UpdateCategoryUseCase updateCategoryUseCase){
+            final UpdateCategoryUseCase updateCategoryUseCase,
+            final DeleteCategoryUseCase deleteCategoryUseCase){
         this.createCategoryUsecase = Objects.requireNonNull(createCategoryUsecase);
         this.getCategoryByIdUseCase = Objects.requireNonNull(getCategoryByIdUseCase);
         this.updateCategoryUseCase = Objects.requireNonNull(updateCategoryUseCase);
+        this.deleteCategoryUseCase = Objects.requireNonNull(deleteCategoryUseCase);
     }
     @Override
     public ResponseEntity<?> createCategory(CreateCategoryApiInput input) {
@@ -79,5 +82,10 @@ public class CategoryController implements CategoryAPI {
 
         return this.updateCategoryUseCase.execute(aCommand)
                 .fold(onError, onSuccess);
+    }
+
+    @Override
+    public void deleteById(final String anId) {
+        this.deleteCategoryUseCase.execute(anId);
     }
 }
