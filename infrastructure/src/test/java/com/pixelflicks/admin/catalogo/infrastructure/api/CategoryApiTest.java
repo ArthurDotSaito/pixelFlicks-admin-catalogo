@@ -388,6 +388,6 @@ public class CategoryApiTest {
                 Objects.equals(expectedDirection, query.direction()) &&
                 Objects.equals(expectedSort, query.sort()) &&
                 Objects.equals(expectedTerms, query.terms())
-                ))
+                ));
     }
 }
