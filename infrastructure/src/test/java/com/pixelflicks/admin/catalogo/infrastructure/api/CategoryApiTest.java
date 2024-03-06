@@ -333,6 +333,4 @@ public class CategoryApiTest {
 
         verify(deleteCategoryUseCase, times(1)).execute(eq(expectedId));
     }
-
-
 }
