@@ -16,7 +16,7 @@ public class CategoryResponseTest {
 
     @Test
     public void testMarshall() throws Exception{
-        final var expectId = "12345";
+        final var expectedId = "12345";
         final var expectedName = "Filmes";
         final var expectedDescription = "A categoria mais assistida";
         final var expectedIsActive = false;
@@ -25,7 +25,7 @@ public class CategoryResponseTest {
         final var expectedDeletedAt = Instant.now();
 
         final var response = new CategoryRespose(
-                expectId,
+                expectedId,
                 expectedName,
                 expectedDescription,
                 expectedIsActive,
@@ -37,13 +37,47 @@ public class CategoryResponseTest {
         final var actualJson = this.json.write(response);
 
         Assertions.assertThat(actualJson)
-                .hasJsonPathValue("$.id", expectId)
-                .hasJsonPathValue("$.name", expectedDescription)
+                .hasJsonPathValue("$.id", expectedId)
+                .hasJsonPathValue("$.name", expectedName)
                 .hasJsonPathValue("$.description", expectedDescription)
                 .hasJsonPathValue("$.is_active", expectedIsActive)
                 .hasJsonPathValue("$.created_at", expectedCreatedAt.toString())
                 .hasJsonPathValue("$.deleted_at", expectedDeletedAt.toString())
                 .hasJsonPathValue("$.updated_at", expectedUpdatedAt.toString());
+    }
+
+    @Test
+    public void testUnmarshall() throws Exception{
+        final var expectedId = "12345";
+        final var expectedName = "Filmes";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = false;
+        final var expectedCreatedAt = Instant.now();
+        final var expectedUpdatedAt = Instant.now();
+        final var expectedDeletedAt = Instant.now();
+
+        final var json = """
+            {
+                "id":"%s",
+                "name":"%s",
+                "description":"%s",
+                "is_active":"%s",
+                "created_at":"%s",
+                "deleted_at":"%s",
+                "updated_at":"%s"
+            }
+            """.formatted(expectedId, expectedName, expectedDescription, expectedIsActive, expectedCreatedAt, expectedDeletedAt, expectedUpdatedAt );
+
+        final var actualJson = this.json.parse(json);
+
+        Assertions.assertThat(actualJson)
+                .hasFieldOrPropertyWithValue("id", expectedId)
+                .hasFieldOrPropertyWithValue("name", expectedName)
+                .hasFieldOrPropertyWithValue("description", expectedDescription)
+                .hasFieldOrPropertyWithValue("active", expectedIsActive)
+                .hasFieldOrPropertyWithValue("createdAt", expectedCreatedAt)
+                .hasFieldOrPropertyWithValue("deletedAt", expectedDeletedAt)
+                .hasFieldOrPropertyWithValue("updatedAt", expectedUpdatedAt);
     }
 
 }
