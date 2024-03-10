@@ -3,12 +3,15 @@ package com.pixelflicks.admin.catalogo.infrastructure.category.models;
 import com.pixelflicks.admin.catalogo.JacksonTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.JacksonTester;
 
 import java.time.Instant;
 
 @JacksonTest
 public class CategoryResponseTest {
+
+    @Autowired
     private JacksonTester<CategoryRespose> json;
 
     @Test
@@ -36,10 +39,11 @@ public class CategoryResponseTest {
         Assertions.assertThat(actualJson)
                 .hasJsonPathValue("$.id", expectId)
                 .hasJsonPathValue("$.name", expectedDescription)
-                .hasJsonPathValue("$.is_description", expectedDescription)
-                .hasJsonPathValue("$.is_createdAt", expectedCreatedAt)
-                .hasJsonPathValue("$.is_deletedAt", expectedDeletedAt)
-                .hasJsonPathValue("$.is_updatedAt", expectedUpdatedAt);
+                .hasJsonPathValue("$.description", expectedDescription)
+                .hasJsonPathValue("$.is_active", expectedIsActive)
+                .hasJsonPathValue("$.created_at", expectedCreatedAt.toString())
+                .hasJsonPathValue("$.deleted_at", expectedDeletedAt.toString())
+                .hasJsonPathValue("$.updated_at", expectedUpdatedAt.toString());
     }
 
 }
