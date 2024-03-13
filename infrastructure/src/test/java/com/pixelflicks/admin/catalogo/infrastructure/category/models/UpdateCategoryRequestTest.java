@@ -3,6 +3,7 @@ package com.pixelflicks.admin.catalogo.infrastructure.category.models;
 import com.pixelflicks.admin.catalogo.JacksonTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.JacksonTester;
 
 import java.time.Instant;
@@ -10,6 +11,7 @@ import java.time.Instant;
 @JacksonTest
 public class UpdateCategoryRequestTest {
 
+    @Autowired
     private JacksonTester<UpdateCategoryRequest> json;
 
     @Test
