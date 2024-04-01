@@ -15,7 +15,7 @@ public class CategoryE2ETest {
 
     //TODO: Change latest to version
     @Container
-    private static final MySQLContainer MYSQL_CONTAINER = new MySQLContainer("mysql:latest")
+    private static final MySQLContainer MYSQL_CONTAINER = new MySQLContainer("mysql:8.0")
             .withUsername("root")
             .withPassword("12345")
             .withDatabaseName("adm_videos");
