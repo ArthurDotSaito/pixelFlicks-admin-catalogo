@@ -1,4 +1,4 @@
-package com.pixelflicks.admin.catalogo.e2e;
+package com.pixelflicks.admin.catalogo.e2e.categories;
 
 import com.pixelflicks.admin.catalogo.E2ETest;
 import org.junit.jupiter.api.Assertions;
@@ -13,8 +13,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public class CategoryE2ETest {
 
-    @Container
     //TODO: Change latest to version
+    @Container
     private static final MySQLContainer MYSQL_CONTAINER = new MySQLContainer("mysql:latest")
             .withUsername("root")
             .withPassword("12345")

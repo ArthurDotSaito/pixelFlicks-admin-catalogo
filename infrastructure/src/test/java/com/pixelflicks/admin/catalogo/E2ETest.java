@@ -14,6 +14,5 @@ import java.lang.annotation.*;
 @ActiveProfiles("test-e2e")
 @SpringBootTest(classes =  WebServerConfig.class)
 @ExtendWith(MySQLCleanUpExtension.class)
-@Tag("integration-test")
 public @interface E2ETest {
 }
