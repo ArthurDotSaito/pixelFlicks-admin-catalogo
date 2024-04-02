@@ -194,7 +194,7 @@ public class CategoryE2ETest {
 
         final var requestBody = new UpdateCategoryRequest(expectedName,expectedDescription,expectedIsActive);
 
-        final var aRequest = put("/categories/" + actualId)
+        final var aRequest = put("/categories/" + actualId.getValue())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(Json.writeValueAsString(requestBody));
 
@@ -223,7 +223,7 @@ public class CategoryE2ETest {
 
         final var requestBody = new UpdateCategoryRequest(expectedName,expectedDescription,expectedIsActive);
 
-        final var aRequest = put("/categories/" + actualId)
+        final var aRequest = put("/categories/" + actualId.getValue())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(Json.writeValueAsString(requestBody));
 
@@ -236,7 +236,7 @@ public class CategoryE2ETest {
         Assertions.assertEquals(expectedIsActive, actualCategory.isActive());
         Assertions.assertNotNull( actualCategory.getCreatedAt());
         Assertions.assertNotNull(actualCategory.getUpdatedAt());
-        Assertions.assertNull( actualCategory.getDeletedAt());
+        Assertions.assertNotNull(actualCategory.getDeletedAt());
     }
 
     @Test
@@ -252,7 +252,7 @@ public class CategoryE2ETest {
 
         final var requestBody = new UpdateCategoryRequest(expectedName,expectedDescription,expectedIsActive);
 
-        final var aRequest = put("/categories/" + actualId)
+        final var aRequest = put("/categories/" + actualId.getValue())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(Json.writeValueAsString(requestBody));
 
