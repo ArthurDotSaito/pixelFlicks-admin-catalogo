@@ -107,7 +107,24 @@ public class CategoryE2ETest {
                 .andExpect(jsonPath("$.per_page", equalTo(1)))
                 .andExpect(jsonPath("$.total", equalTo(3)))
                 .andExpect(jsonPath("$.items", hasSize(0)));
+    }
 
+    @Test
+    public void asACatelogAdminIShouldBeAbleToSearchBetweenAllCategories() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+        Assertions.assertEquals(0, categoryRepository.count());
+
+        givenACategory("Filmes",null,true);
+        givenACategory("Documentários",null,true);
+        givenACategory("Séries",null,true);
+
+        listCategories(0,1,"fil")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(0)))
+                .andExpect(jsonPath("$.per_page", equalTo(1)))
+                .andExpect(jsonPath("$.total", equalTo(1)))
+                .andExpect(jsonPath("$.items", hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name", equalTo("Filmes")));
     }
 
     private CategoryID givenACategory(final String aName, final String aDescription, final boolean isActive) throws Exception {
@@ -139,6 +156,10 @@ public class CategoryE2ETest {
 
     private ResultActions listCategories(final int page, final int perPage) throws Exception {
         return listCategories(page, perPage, "", "", "");
+    }
+
+    private ResultActions listCategories(final int page, final int perPage, final String search) throws Exception {
+        return listCategories(page, perPage, search, "", "");
     }
 
     private ResultActions listCategories(final int page, final int perPage, final String search, final String sort, final String direction) throws Exception {
