@@ -127,6 +127,26 @@ public class CategoryE2ETest {
                 .andExpect(jsonPath("$.items[0].name", equalTo("Filmes")));
     }
 
+    @Test
+    public void asACatelogAdminIShouldBeAbleToSortAllCategoriesByDescriptionDesc() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+        Assertions.assertEquals(0, categoryRepository.count());
+
+        givenACategory("Filmes","C",true);
+        givenACategory("Documentários","Z",true);
+        givenACategory("Séries","A",true);
+
+        listCategories(0,3,"", "description", "desc")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(0)))
+                .andExpect(jsonPath("$.per_page", equalTo(3)))
+                .andExpect(jsonPath("$.total", equalTo(3)))
+                .andExpect(jsonPath("$.items", hasSize(3)))
+                .andExpect(jsonPath("$.items[0].name", equalTo("Séries")))
+                .andExpect(jsonPath("$.items[1].name", equalTo("Filmes")))
+                .andExpect(jsonPath("$.items[2].name", equalTo("Documentários")));
+    }
+
     private CategoryID givenACategory(final String aName, final String aDescription, final boolean isActive) throws Exception {
         final var requestBody = new CreateCategoryRequest(aName,aDescription,isActive);
 
