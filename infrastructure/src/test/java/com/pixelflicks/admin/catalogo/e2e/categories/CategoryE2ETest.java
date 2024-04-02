@@ -48,7 +48,7 @@ public class CategoryE2ETest {
     private CategoryRepository categoryRepository;
 
     @Test
-    public void asACatelogAdminIShouldBeAbleToCreateANewCategoryWithValidValues() throws Exception {
+    public void asACatalogAdminIShouldBeAbleToCreateANewCategoryWithValidValues() throws Exception {
         Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
         Assertions.assertEquals(0, categoryRepository.count());
 
@@ -69,7 +69,7 @@ public class CategoryE2ETest {
     }
 
     @Test
-    public void asACatelogAdminIShouldBeAbleToNavigateToAllCategories() throws Exception {
+    public void asACatalogAdminIShouldBeAbleToNavigateToAllCategories() throws Exception {
         Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
         Assertions.assertEquals(0, categoryRepository.count());
 
@@ -110,7 +110,7 @@ public class CategoryE2ETest {
     }
 
     @Test
-    public void asACatelogAdminIShouldBeAbleToSearchBetweenAllCategories() throws Exception {
+    public void asACatalogAdminIShouldBeAbleToSearchBetweenAllCategories() throws Exception {
         Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
         Assertions.assertEquals(0, categoryRepository.count());
 
@@ -128,7 +128,7 @@ public class CategoryE2ETest {
     }
 
     @Test
-    public void asACatelogAdminIShouldBeAbleToSortAllCategoriesByDescriptionDesc() throws Exception {
+    public void asACatalogAdminIShouldBeAbleToSortAllCategoriesByDescriptionDesc() throws Exception {
         Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
         Assertions.assertEquals(0, categoryRepository.count());
 
@@ -142,9 +142,9 @@ public class CategoryE2ETest {
                 .andExpect(jsonPath("$.per_page", equalTo(3)))
                 .andExpect(jsonPath("$.total", equalTo(3)))
                 .andExpect(jsonPath("$.items", hasSize(3)))
-                .andExpect(jsonPath("$.items[0].name", equalTo("Séries")))
+                .andExpect(jsonPath("$.items[0].name", equalTo("Documentários")))
                 .andExpect(jsonPath("$.items[1].name", equalTo("Filmes")))
-                .andExpect(jsonPath("$.items[2].name", equalTo("Documentários")));
+                .andExpect(jsonPath("$.items[2].name", equalTo("Séries")));
     }
 
     private CategoryID givenACategory(final String aName, final String aDescription, final boolean isActive) throws Exception {
@@ -183,12 +183,13 @@ public class CategoryE2ETest {
     }
 
     private ResultActions listCategories(final int page, final int perPage, final String search, final String sort, final String direction) throws Exception {
-        final var aRequest = get("/categories/")
+        final var aRequest = get("/categories")
                 .queryParam("page", String.valueOf(page))
                 .queryParam("perPage", String.valueOf(perPage))
                 .queryParam("search", search)
-                .queryParam("sort", sort )
-                .queryParam("dir", direction )
+                .queryParam("sort", sort)
+                .queryParam("dir", direction)
+                .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
         return this.mvc.perform(aRequest);
