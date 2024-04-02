@@ -105,7 +105,7 @@ public class CategoryE2ETest {
         return Json.readValue(json, CategoryResponse.class);
     }
 
-    private ResultActions listCategorues(final int page, final int perPage) throws Exception {
+    private ResultActions listCategories(final int page, final int perPage) throws Exception {
         return listCategories(page, perPage, "", "", "");
     }
 
