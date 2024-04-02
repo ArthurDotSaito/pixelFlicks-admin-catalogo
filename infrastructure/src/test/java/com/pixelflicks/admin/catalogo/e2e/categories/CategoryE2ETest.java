@@ -4,6 +4,7 @@ import com.pixelflicks.admin.catalogo.E2ETest;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.CategoryResponse;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.CreateCategoryRequest;
+import com.pixelflicks.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest;
 import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.CategoryRepository;
 import com.pixelflicks.admin.catalogo.infrastructure.configuration.json.Json;
 import org.junit.jupiter.api.Assertions;
@@ -178,6 +179,35 @@ public class CategoryE2ETest {
         final var json = this.mvc.perform(aRequest)
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message", equalTo("Category with Id 123 was not found")));
+    }
+
+    @Test
+    public void asACatalogAdminIShouldBeAbleToUpdateACategoryByItsIdentifier() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+        Assertions.assertEquals(0, categoryRepository.count());
+
+        final var expectedName = "Filmes";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+
+        final var actualId = givenACategory("Movies",null,expectedIsActive);
+
+        final var requestBody = new UpdateCategoryRequest(expectedName,expectedDescription,expectedIsActive);
+
+        final var aRequest = put("/categories/" + actualId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Json.writeValueAsString(requestBody));
+
+        this.mvc.perform(aRequest).andExpect(status().isNoContent());
+
+        var actualCategory = categoryRepository.findById(actualId.getValue()).get();
+
+        Assertions.assertEquals(expectedName, actualCategory.getName());
+        Assertions.assertEquals(expectedDescription, actualCategory.getDescription());
+        Assertions.assertEquals(expectedIsActive, actualCategory.isActive());
+        Assertions.assertNotNull( actualCategory.getCreatedAt());
+        Assertions.assertNotNull(actualCategory.getUpdatedAt());
+        Assertions.assertNull( actualCategory.getDeletedAt());
     }
 
     private CategoryID givenACategory(final String aName, final String aDescription, final boolean isActive) throws Exception {
