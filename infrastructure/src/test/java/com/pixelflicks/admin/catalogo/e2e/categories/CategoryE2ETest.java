@@ -198,7 +198,7 @@ public class CategoryE2ETest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(Json.writeValueAsString(requestBody));
 
-        this.mvc.perform(aRequest).andExpect(status().isNoContent());
+        this.mvc.perform(aRequest).andExpect(status().isOk());
 
         var actualCategory = categoryRepository.findById(actualId.getValue()).get();
 
@@ -208,6 +208,64 @@ public class CategoryE2ETest {
         Assertions.assertNotNull( actualCategory.getCreatedAt());
         Assertions.assertNotNull(actualCategory.getUpdatedAt());
         Assertions.assertNull( actualCategory.getDeletedAt());
+    }
+
+    @Test
+    public void asACatalogAdminIShouldBeAbleToInactivateACategoryByItsIdentifier() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+        Assertions.assertEquals(0, categoryRepository.count());
+
+        final var expectedName = "Filmes";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = false;
+
+        final var actualId = givenACategory("Movies",null, true);
+
+        final var requestBody = new UpdateCategoryRequest(expectedName,expectedDescription,expectedIsActive);
+
+        final var aRequest = put("/categories/" + actualId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Json.writeValueAsString(requestBody));
+
+        this.mvc.perform(aRequest).andExpect(status().isOk());
+
+        var actualCategory = categoryRepository.findById(actualId.getValue()).get();
+
+        Assertions.assertEquals(expectedName, actualCategory.getName());
+        Assertions.assertEquals(expectedDescription, actualCategory.getDescription());
+        Assertions.assertEquals(expectedIsActive, actualCategory.isActive());
+        Assertions.assertNotNull( actualCategory.getCreatedAt());
+        Assertions.assertNotNull(actualCategory.getUpdatedAt());
+        Assertions.assertNull( actualCategory.getDeletedAt());
+    }
+
+    @Test
+    public void asACatalogAdminIShouldBeAbleToActivateACategoryByItsIdentifier() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+        Assertions.assertEquals(0, categoryRepository.count());
+
+        final var expectedName = "Filmes";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+
+        final var actualId = givenACategory("Movies",null, false);
+
+        final var requestBody = new UpdateCategoryRequest(expectedName,expectedDescription,expectedIsActive);
+
+        final var aRequest = put("/categories/" + actualId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Json.writeValueAsString(requestBody));
+
+        this.mvc.perform(aRequest).andExpect(status().isOk());
+
+        var actualCategory = categoryRepository.findById(actualId.getValue()).get();
+
+        Assertions.assertEquals(expectedName, actualCategory.getName());
+        Assertions.assertEquals(expectedDescription, actualCategory.getDescription());
+        Assertions.assertEquals(expectedIsActive, actualCategory.isActive());
+        Assertions.assertNotNull( actualCategory.getCreatedAt());
+        Assertions.assertNotNull(actualCategory.getUpdatedAt());
+        Assertions.assertNull(actualCategory.getDeletedAt());
     }
 
     private CategoryID givenACategory(final String aName, final String aDescription, final boolean isActive) throws Exception {
