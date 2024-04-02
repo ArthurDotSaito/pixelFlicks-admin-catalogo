@@ -18,6 +18,8 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -73,9 +75,39 @@ public class CategoryE2ETest {
 
         givenACategory("Filmes",null,true);
         givenACategory("Documentários",null,true);
-        givenACategory("séries",null,true);
+        givenACategory("Séries",null,true);
 
-        listCategories(0,1);
+        listCategories(0,1)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(0)))
+                .andExpect(jsonPath("$.per_page", equalTo(1)))
+                .andExpect(jsonPath("$.total", equalTo(3)))
+                .andExpect(jsonPath("$.items", hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name", equalTo("Documentários")));
+
+        listCategories(1,1)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(1)))
+                .andExpect(jsonPath("$.per_page", equalTo(1)))
+                .andExpect(jsonPath("$.total", equalTo(3)))
+                .andExpect(jsonPath("$.items", hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name", equalTo("Filmes")));
+
+        listCategories(2,1)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(2)))
+                .andExpect(jsonPath("$.per_page", equalTo(1)))
+                .andExpect(jsonPath("$.total", equalTo(3)))
+                .andExpect(jsonPath("$.items", hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name", equalTo("Séries")));
+
+        listCategories(3,1)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(3)))
+                .andExpect(jsonPath("$.per_page", equalTo(1)))
+                .andExpect(jsonPath("$.total", equalTo(3)))
+                .andExpect(jsonPath("$.items", hasSize(0)));
+
     }
 
     private CategoryID givenACategory(final String aName, final String aDescription, final boolean isActive) throws Exception {
