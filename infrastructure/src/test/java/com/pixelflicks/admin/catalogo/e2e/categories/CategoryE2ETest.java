@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -65,6 +66,18 @@ public class CategoryE2ETest {
         Assertions.assertNull( actualCategory.deletedAt());
     }
 
+    @Test
+    public void asACatelogAdminIShouldBeAbleToNavigateToAllCategories() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+        Assertions.assertEquals(0, categoryRepository.count());
+
+        givenACategory("Filmes",null,true);
+        givenACategory("Documentários",null,true);
+        givenACategory("séries",null,true);
+
+        listCategories(0,1);
+    }
+
     private CategoryID givenACategory(final String aName, final String aDescription, final boolean isActive) throws Exception {
         final var requestBody = new CreateCategoryRequest(aName,aDescription,isActive);
 
@@ -90,5 +103,21 @@ public class CategoryE2ETest {
                 .getResponse().getContentAsString();
 
         return Json.readValue(json, CategoryResponse.class);
+    }
+
+    private ResultActions listCategorues(final int page, final int perPage) throws Exception {
+        return listCategories(page, perPage, "", "", "");
+    }
+
+    private ResultActions listCategories(final int page, final int perPage, final String search, final String sort, final String direction) throws Exception {
+        final var aRequest = get("/categories/")
+                .queryParam("page", String.valueOf(page))
+                .queryParam("perPage", String.valueOf(perPage))
+                .queryParam("search", search)
+                .queryParam("sort", sort )
+                .queryParam("dir", direction )
+                .contentType(MediaType.APPLICATION_JSON);
+
+        return this.mvc.perform(aRequest);
     }
 }
