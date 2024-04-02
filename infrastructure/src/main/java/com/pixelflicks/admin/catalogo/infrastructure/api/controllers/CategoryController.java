@@ -13,7 +13,7 @@ import com.pixelflicks.admin.catalogo.domain.category.CategorySearchQuery;
 import com.pixelflicks.admin.catalogo.domain.pagination.Pagination;
 import com.pixelflicks.admin.catalogo.domain.validation.handler.Notification;
 import com.pixelflicks.admin.catalogo.infrastructure.api.CategoryAPI;
-import com.pixelflicks.admin.catalogo.infrastructure.category.models.CategoryRespose;
+import com.pixelflicks.admin.catalogo.infrastructure.category.models.CategoryResponse;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.CreateCategoryRequest;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest;
 import com.pixelflicks.admin.catalogo.infrastructure.category.presenters.CategoryApiPresenter;
@@ -69,7 +69,7 @@ public class CategoryController implements CategoryAPI {
     }
 
     @Override
-    public CategoryRespose getById(final String id) {
+    public CategoryResponse getById(final String id) {
         return CategoryApiPresenter.present(this.getCategoryByIdUseCase.execute(id));
     }
 

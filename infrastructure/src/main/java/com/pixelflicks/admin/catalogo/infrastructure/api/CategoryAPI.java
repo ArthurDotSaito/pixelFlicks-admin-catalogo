@@ -1,7 +1,7 @@
 package com.pixelflicks.admin.catalogo.infrastructure.api;
 
 import com.pixelflicks.admin.catalogo.domain.pagination.Pagination;
-import com.pixelflicks.admin.catalogo.infrastructure.category.models.CategoryRespose;
+import com.pixelflicks.admin.catalogo.infrastructure.category.models.CategoryResponse;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.CreateCategoryRequest;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,7 +56,7 @@ public interface CategoryAPI {
             @ApiResponse(responseCode = "422", description = "Category was not found"),
             @ApiResponse(responseCode = "422", description = "Internal server error"),
     })
-    CategoryRespose getById(@PathVariable(name = "id") String id);
+    CategoryResponse getById(@PathVariable(name = "id") String id);
 
 
     @PutMapping(value = "{id}",

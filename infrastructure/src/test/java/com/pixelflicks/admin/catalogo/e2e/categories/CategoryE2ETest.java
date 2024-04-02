@@ -2,6 +2,7 @@ package com.pixelflicks.admin.catalogo.e2e.categories;
 
 import com.pixelflicks.admin.catalogo.E2ETest;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
+import com.pixelflicks.admin.catalogo.infrastructure.category.models.CategoryResponse;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.CreateCategoryRequest;
 import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.CategoryRepository;
 import com.pixelflicks.admin.catalogo.infrastructure.configuration.json.Json;
@@ -44,13 +45,17 @@ public class CategoryE2ETest {
     private CategoryRepository categoryRepository;
 
     @Test
-    public void asACatelogAdminIShouldBeAbleToCreateANewCategoryWithValidValues(){
+    public void asACatelogAdminIShouldBeAbleToCreateANewCategoryWithValidValues() throws Exception {
         Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
         Assertions.assertEquals(0, categoryRepository.count());
 
         final var expectedName = "Filmes";
         final var expectedDescription = "A categoria mais assistida";
         final var expectedIsActive = true;
+
+        final var actualId = givenACategory(expectedName,expectedDescription,expectedIsActive);
+
+        final var actualCategory = retrieveACategory(actualId.getValue());
     }
 
     private CategoryID givenACategory(final String aName, final String aDescription, final boolean isActive) throws Exception {
@@ -67,5 +72,16 @@ public class CategoryE2ETest {
                 .replace("/categories/", "");
 
         return CategoryID.from(actualId);
+    }
+
+    private CategoryResponse retrieveACategory(final String anId) throws Exception {
+        final var aRequest = get("/categories/" + anId);
+
+        final var json = this.mvc.perform(aRequest)
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        return Json.readValue(json, CategoryResponse.class);
     }
 }
