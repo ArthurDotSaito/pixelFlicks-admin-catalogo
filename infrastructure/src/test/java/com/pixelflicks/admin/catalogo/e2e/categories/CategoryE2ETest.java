@@ -56,6 +56,13 @@ public class CategoryE2ETest {
         final var actualId = givenACategory(expectedName,expectedDescription,expectedIsActive);
 
         final var actualCategory = retrieveACategory(actualId.getValue());
+
+        Assertions.assertEquals(expectedName, actualCategory.name());
+        Assertions.assertEquals(expectedDescription, actualCategory.description());
+        Assertions.assertEquals(expectedIsActive, actualCategory.active());
+        Assertions.assertNotNull( actualCategory.createdAt());
+        Assertions.assertNotNull(actualCategory.updatedAt());
+        Assertions.assertNull( actualCategory.deletedAt());
     }
 
     private CategoryID givenACategory(final String aName, final String aDescription, final boolean isActive) throws Exception {
@@ -75,7 +82,7 @@ public class CategoryE2ETest {
     }
 
     private CategoryResponse retrieveACategory(final String anId) throws Exception {
-        final var aRequest = get("/categories/" + anId);
+        final var aRequest = get("/categories/" + anId).contentType(MediaType.APPLICATION_JSON);
 
         final var json = this.mvc.perform(aRequest)
                 .andExpect(status().isOk())
