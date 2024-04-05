@@ -2,7 +2,9 @@ package com.pixelflicks.admin.catalogo.domain.genre;
 
 import com.pixelflicks.admin.catalogo.domain.AggregateRoot;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
+import com.pixelflicks.admin.catalogo.domain.exceptions.NotificationException;
 import com.pixelflicks.admin.catalogo.domain.validation.ValidationHandler;
+import com.pixelflicks.admin.catalogo.domain.validation.handler.Notification;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -33,6 +35,13 @@ public class Genre extends AggregateRoot<GenreID> {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
+
+        final var notification = Notification.create();
+        validate(notification);
+
+        if(notification.hasErrors()){
+            throw new NotificationException("Failed to create a Aggregate Genre", notification);
+        }
     }
 
     public static Genre newGenre(final String aName, final boolean isActive){
@@ -60,7 +69,7 @@ public class Genre extends AggregateRoot<GenreID> {
 
     @Override
     public void validate(ValidationHandler handler) {
-
+        new GenreValidator(this, handler).validate();
     }
 
     public String getName() {
