@@ -54,6 +54,10 @@ public class Genre extends AggregateRoot<GenreID> {
        return new Genre(anId, aName, categories, isActive, updatedAt, createdAt, deletedAt);
     }
 
+    public static Genre with(final Genre aGenre) {
+        return new Genre(aGenre.id, aGenre.name, new ArrayList<>(aGenre.categories) , aGenre.active, aGenre.updatedAt, aGenre.createdAt, aGenre.deletedAt);
+    }
+
     @Override
     public void validate(ValidationHandler handler) {
 
@@ -65,6 +69,10 @@ public class Genre extends AggregateRoot<GenreID> {
 
     public List<CategoryID> getCategories() {
         return Collections.unmodifiableList(categories);
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     public Instant getCreatedAt() {
