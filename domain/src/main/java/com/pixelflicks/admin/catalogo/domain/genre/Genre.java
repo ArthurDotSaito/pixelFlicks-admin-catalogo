@@ -5,6 +5,7 @@ import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.domain.validation.ValidationHandler;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +33,13 @@ public class Genre extends AggregateRoot<GenreID> {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
+    }
+
+    public static Genre newGenre(final String aName, final boolean isActive){
+        final var anId = GenreID.unique();
+        final var now = Instant.now();
+        final var deletedAt = isActive ? null:now;
+        return new Genre(anId, aName, new ArrayList<>(), isActive, now, now, deletedAt);
     }
 
     @Override
