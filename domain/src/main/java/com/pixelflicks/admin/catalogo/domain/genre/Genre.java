@@ -22,9 +22,9 @@ public class Genre extends AggregateRoot<GenreID> {
             final String aName,
             final List<CategoryID> categories,
             final boolean isActive,
-            final Instant deletedAt,
+            final Instant createdAt,
             final Instant updatedAt,
-            final Instant createdAt) {
+            final Instant deletedAt) {
 
         super(anId);
         this.name = aName;
@@ -38,7 +38,7 @@ public class Genre extends AggregateRoot<GenreID> {
     public static Genre newGenre(final String aName, final boolean isActive){
         final var anId = GenreID.unique();
         final var now = Instant.now();
-        final var deletedAt = isActive ? null:now;
+        final var deletedAt = isActive ? null : now;
         return new Genre(anId, aName, new ArrayList<>(), isActive, now, now, deletedAt);
     }
 
@@ -47,11 +47,11 @@ public class Genre extends AggregateRoot<GenreID> {
             final String aName,
             final List<CategoryID> categories,
             final boolean isActive,
-            final Instant deletedAt,
+            final Instant createdAt,
             final Instant updatedAt,
-            final Instant createdAt) {
+            final Instant deletedAt) {
 
-       return new Genre(anId, aName, categories, isActive, updatedAt, createdAt, deletedAt);
+       return new Genre(anId, aName, categories, isActive, createdAt, updatedAt, deletedAt);
     }
 
     public static Genre with(final Genre aGenre) {

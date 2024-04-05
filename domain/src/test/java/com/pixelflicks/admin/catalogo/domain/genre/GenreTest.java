@@ -11,18 +11,18 @@ public class GenreTest {
     public void givenValidParams_whenCallNewGenre_shouldInstantiateAGenre(){
         final var expectedName = "Ação";
         final var expectedIsActive = true;
-        final var expectedCategories = 0;
+        final var expectedCategoriesSize = 0;
 
-        final var actualGenre = Genre.newGenre(expectedName,expectedIsActive);
+        final var actualGenre = Genre.newGenre(expectedName, expectedIsActive);
 
         Assertions.assertNotNull(actualGenre);
         Assertions.assertNotNull(actualGenre.getId());
-        Assertions.assertNotNull(expectedName, actualGenre.getName());
-        Assertions.assertNotNull(expectedIsActive, actualGenre.isActive());
-        Assertions.assertNotNull(expectedIsCategories, actualGenre.getCategories());
+        Assertions.assertEquals(expectedName, actualGenre.getName());
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive());
+        Assertions.assertEquals(expectedCategoriesSize, actualGenre.getCategories().size());
         Assertions.assertNotNull(actualGenre.getCreatedAt());
         Assertions.assertNotNull(actualGenre.getUpdatedAt());
-        Assertions.assertNotNull(actualGenre.getDeletedAt());
+        Assertions.assertNull(actualGenre.getDeletedAt());
     }
 
     @Test
