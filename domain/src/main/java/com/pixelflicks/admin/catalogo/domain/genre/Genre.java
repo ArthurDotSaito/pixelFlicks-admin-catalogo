@@ -42,6 +42,18 @@ public class Genre extends AggregateRoot<GenreID> {
         return new Genre(anId, aName, new ArrayList<>(), isActive, now, now, deletedAt);
     }
 
+    public static Genre with(
+            final GenreID anId,
+            final String aName,
+            final List<CategoryID> categories,
+            final boolean isActive,
+            final Instant deletedAt,
+            final Instant updatedAt,
+            final Instant createdAt) {
+
+       return new Genre(anId, aName, categories, isActive, updatedAt, createdAt, deletedAt);
+    }
+
     @Override
     public void validate(ValidationHandler handler) {
 
