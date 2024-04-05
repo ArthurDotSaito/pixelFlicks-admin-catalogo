@@ -42,4 +42,26 @@ public class GenreTest {
         Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
     }
 
+    @Test
+    public void givenInvalidNameGreaterThan255_whenCallNewGenreAndValidate_shouldReceiveAError(){
+        final var expectedName = """
+                Desde ontem a noite o deploy automatizado no Heroku deletou todas as entradas de estados estáticos nos componentes da UI.
+                Com este commit, a disposição dos elementos HTML deletou todas as entradas da execução parelela de funções em multi-threads.
+                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                """;
+
+        final var expectedIsActive = true;
+        final var expectedErrorCount = 0;
+        final var expectedErrorMessage = " 'Name' must be between 1 and 255 characters";
+
+        final var actualGenre = Genre.newGenre(expectedName,expectedIsActive);
+
+        final var actualException = Assertions.assertThrows(DomainException.class, () ->{
+            actualGenre.validate(new ThrowsValidationHandler());
+        });
+
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+    }
+
 }
