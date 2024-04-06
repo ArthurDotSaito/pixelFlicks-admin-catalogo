@@ -1,6 +1,5 @@
 package com.pixelflicks.admin.catalogo.domain.exceptions;
 
-import com.pixelflicks.admin.catalogo.domain.validation.Error;
 import com.pixelflicks.admin.catalogo.domain.validation.handler.Notification;
 
 import java.util.List;
