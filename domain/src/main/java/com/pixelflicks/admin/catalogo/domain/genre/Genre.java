@@ -3,6 +3,7 @@ package com.pixelflicks.admin.catalogo.domain.genre;
 import com.pixelflicks.admin.catalogo.domain.AggregateRoot;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.domain.exceptions.NotificationException;
+import com.pixelflicks.admin.catalogo.domain.utils.InstantUtils;
 import com.pixelflicks.admin.catalogo.domain.validation.ValidationHandler;
 import com.pixelflicks.admin.catalogo.domain.validation.handler.Notification;
 
@@ -46,7 +47,7 @@ public class Genre extends AggregateRoot<GenreID> {
 
     public static Genre newGenre(final String aName, final boolean isActive){
         final var anId = GenreID.unique();
-        final var now = Instant.now();
+        final var now = InstantUtils.now();
         final var deletedAt = isActive ? null : now;
         return new Genre(anId, aName, new ArrayList<>(), isActive, now, now, deletedAt);
     }
@@ -94,5 +95,21 @@ public class Genre extends AggregateRoot<GenreID> {
 
     public Instant getDeletedAt() {
         return deletedAt;
+    }
+
+    public Genre deactivate(){
+        if(getDeletedAt() == null){
+            this.deletedAt == InstantUtils.now();
+        }
+        this.active == false;
+        this.updatedAt = InstantUtils.now();
+        return this;
+    }
+
+    public Genre activate(){
+        this.deletedAt = null;
+        this.active = true;
+        this.updatedAt = InstantUtils.now();
+        return this;
     }
 }

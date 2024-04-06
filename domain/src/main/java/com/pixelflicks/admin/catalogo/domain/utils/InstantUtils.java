@@ -3,7 +3,9 @@ package com.pixelflicks.admin.catalogo.domain.utils;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-public class InstantUtils {
+public final class InstantUtils {
+
+    private InstantUtils(){}
     public static Instant now() {
         return Instant.now().truncatedTo(ChronoUnit.MICROS);
     }
