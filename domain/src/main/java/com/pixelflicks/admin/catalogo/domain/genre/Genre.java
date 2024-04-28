@@ -99,9 +99,9 @@ public class Genre extends AggregateRoot<GenreID> {
 
     public Genre deactivate(){
         if(getDeletedAt() == null){
-            this.deletedAt == InstantUtils.now();
+            this.deletedAt = InstantUtils.now();
         }
-        this.active == false;
+        this.active = false;
         this.updatedAt = InstantUtils.now();
         return this;
     }

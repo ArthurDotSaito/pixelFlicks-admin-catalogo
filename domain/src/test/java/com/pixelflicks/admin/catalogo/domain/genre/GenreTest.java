@@ -94,7 +94,7 @@ public class GenreTest {
 
         final var actualGenre = Genre.newGenre(expectedName, false);
         Assertions.assertNotNull(actualGenre);
-        Assertions.assertTrue(actualGenre.isActive());
+        Assertions.assertFalse(actualGenre.isActive());
         Assertions.assertNotNull(actualGenre.getDeletedAt());
 
         final var actualCreatedAt = actualGenre.getCreatedAt();
