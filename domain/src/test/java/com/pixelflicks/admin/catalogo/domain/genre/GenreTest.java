@@ -125,7 +125,7 @@ public class GenreTest {
 
         final var actualGenre = Genre.newGenre("acao", false);
         Assertions.assertFalse(actualGenre.isActive());
-        Assertions.assertNull(actualGenre.getDeletedAt());
+        Assertions.assertNotNull(actualGenre.getDeletedAt());
 
         final var actualCreatedAt = actualGenre.getCreatedAt();
         final var actualUpdatedAt = actualGenre.getUpdatedAt();
@@ -148,7 +148,7 @@ public class GenreTest {
         final var expectedCategories = List.of(CategoryID.from("123"));
 
         final var actualGenre = Genre.newGenre("acao", true);
-        Assertions.assertFalse(actualGenre.isActive());
+        Assertions.assertTrue(actualGenre.isActive());
         Assertions.assertNull(actualGenre.getDeletedAt());
 
         final var actualCreatedAt = actualGenre.getCreatedAt();
