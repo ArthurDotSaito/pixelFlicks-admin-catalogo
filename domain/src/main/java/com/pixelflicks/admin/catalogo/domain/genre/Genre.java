@@ -70,7 +70,7 @@ public class Genre extends AggregateRoot<GenreID> {
 
     public Genre update(final String aName, final boolean isActive, final List<CategoryID> categories){
         this.name = aName;
-        this.categories = new ArrayList<>(categories);
+        this.categories = new ArrayList<>(categories != null ? categories: Collections.emptyList());
         this.updatedAt = InstantUtils.now();
         if(isActive){
             activate();
