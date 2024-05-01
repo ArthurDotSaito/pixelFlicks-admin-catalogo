@@ -9,8 +9,8 @@ import com.pixelflicks.admin.catalogo.application.category.retrieve.list.ListCat
 import com.pixelflicks.admin.catalogo.application.category.update.UpdateCategoryCommand;
 import com.pixelflicks.admin.catalogo.application.category.update.UpdateCategoryOutput;
 import com.pixelflicks.admin.catalogo.application.category.update.UpdateCategoryUseCase;
-import com.pixelflicks.admin.catalogo.domain.category.CategorySearchQuery;
 import com.pixelflicks.admin.catalogo.domain.pagination.Pagination;
+import com.pixelflicks.admin.catalogo.domain.pagination.SearchQuery;
 import com.pixelflicks.admin.catalogo.domain.validation.handler.Notification;
 import com.pixelflicks.admin.catalogo.infrastructure.api.CategoryAPI;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.CategoryResponse;
@@ -64,7 +64,7 @@ public class CategoryController implements CategoryAPI {
 
     @Override
     public Pagination<?> listCategories(final String search, final int page, final int perPage, final String sort, final String direction) {
-        return listCategoriesUseCase.execute(new CategorySearchQuery(page, perPage, search, sort, direction))
+        return listCategoriesUseCase.execute(new SearchQuery(page, perPage, search, sort, direction))
                 .map(CategoryApiPresenter::present);
     }
 
