@@ -72,6 +72,15 @@ public class Genre extends AggregateRoot<GenreID> {
         return this;
     }
 
+    public Genre removeCategory(final CategoryID aCategoryId){
+        if(aCategoryId == null){
+            return this;
+        }
+        this.categories.remove(aCategoryId);
+        this.updatedAt = InstantUtils.now();
+        return this;
+    }
+
     @Override
     public void validate(ValidationHandler handler) {
         new GenreValidator(this, handler).validate();
