@@ -14,6 +14,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -68,6 +70,12 @@ public class CategoryMySQLGateway implements CategoryGateway {
                 pageResult.getTotalElements(),
                 pageResult.map(CategoryJpaEntity::toAggregate).toList()
         );
+    }
+
+    @Override
+    public List<CategoryID> existsByIds(final Iterable<CategoryID> categoryIds) {
+        //TODO: Implement
+        return Collections.emptyList();
     }
 
     private Category save(final Category aCategory){
