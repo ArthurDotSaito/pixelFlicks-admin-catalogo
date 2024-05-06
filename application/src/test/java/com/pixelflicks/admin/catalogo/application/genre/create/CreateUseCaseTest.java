@@ -88,7 +88,7 @@ public class CreateUseCaseTest {
     }
 
     @Test
-    public void givenAInvalidEmptyName_whenCallsCreateCategory_shouldReturnDomainException(){
+    public void givenAInvalidEmptyName_whenCallsCreateGenre_shouldReturnDomainException(){
         //given
         final var expectedName = " ";
         final var expectedIsActive = true;
@@ -113,13 +113,14 @@ public class CreateUseCaseTest {
     }
 
     @Test
-    public void givenAInvalidNullName_whenCallsCreateCategory_shouldReturnDomainException(){
+    public void givenAInvalidNullName_whenCallsCreateGenre_shouldReturnDomainException(){
         //given
         final String expectedName = null;
         final var expectedIsActive = true;
         final var expectedCategories = List.<CategoryID>of();
         final var expectedErrorMessage = "A 'name' should not be null";
         final var expectedErrorCount = 1;
+
 
         final var aCommand = CreateGenreCommand.with(expectedName,expectedIsActive, asString(expectedCategories));
 
@@ -134,6 +135,35 @@ public class CreateUseCaseTest {
         Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
 
         verify(categoryGateway, times(0)).existsByIds(any());
+        verify(genreGateway, times(0)).create(any());
+    }
+
+    @Test
+    public void givenAValidCommand_whenCallsCreateGenreAndSomeCategoriesDoesNotExist_shouldReturnDomainException(){
+        //given
+        final var expectedName = "Ação";
+        final var expectedIsActive = true;
+        final var filmes = CategoryID.from("123");
+        final var series = CategoryID.from("456");
+        final var documentarios = CategoryID.from("789");
+        final var expectedCategories = List.of(filmes, series, documentarios);
+        final var expectedErrorMessage = "Some categories could not be found: 456, 789";
+        final var expectedErrorCount = 1;
+
+        when(categoryGateway.existsByIds(any())).thenReturn(List.of(filmes));
+        final var aCommand = CreateGenreCommand.with(expectedName,expectedIsActive, asString(expectedCategories));
+
+        //when
+        final var actualException = Assertions.assertThrows(NotificationException.class, () ->{
+            useCase.execute(aCommand);
+        });
+
+        //then
+        Assertions.assertNotNull(actualException);
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+
+        verify(categoryGateway, times(1)).existsByIds(any());
         verify(genreGateway, times(0)).create(any());
     }
 
