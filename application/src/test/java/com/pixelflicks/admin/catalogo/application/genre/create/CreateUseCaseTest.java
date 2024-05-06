@@ -56,6 +56,33 @@ public class CreateUseCaseTest {
     }
 
     @Test
+    public void givenAValidCommandWithInactive_whenCallsCreateGenre_shouldReturnGenreId(){
+        //given
+        final var expectedName = "Ação";
+        final var expectedIsActive = false;
+        final var expectedCategories = List.<CategoryID>of();
+
+        final var aCommand = CreateGenreCommand.with(expectedName,expectedIsActive, asString(expectedCategories));
+        when(genreGateway.create(any()))
+                .thenAnswer(returnsFirstArg());
+        //when
+        final var actualOutput = useCase.execute(aCommand);
+
+        //then
+        Assertions.assertNotNull(actualOutput);
+        Assertions.assertNotNull(actualOutput.id());
+
+        verify(genreGateway, times(1)).create(Mockito.argThat(aGenre ->
+                Objects.equals(expectedName, aGenre.getName())
+                        && Objects.equals(expectedIsActive, aGenre.isActive())
+                        && Objects.equals(expectedCategories, aGenre.getCategories())
+                        && Objects.nonNull(aGenre.getCreatedAt())
+                        && Objects.nonNull(aGenre.getUpdatedAt())
+                        && Objects.nonNull(aGenre.getDeletedAt())
+        ));
+    }
+
+    @Test
     public void givenAValidCommandWithCategories_whenCallsCreateGenre_shouldReturnGenreId(){
         //given
         final var expectedName = "Ação";
