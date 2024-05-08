@@ -41,7 +41,7 @@ public class UpdateGenreUseCaseTest {
         final var expectedIsActive = true;
         final var expectedCategories = List.<CategoryID>of();
 
-        final var aCommand = UpdateGenreCommand.with(expectedId.getValue(), expectedName, expectedIsActive, expectedCategories);
+        final var aCommand = UpdateGenreCommand.with(expectedId.getValue(), expectedName, expectedIsActive, asString(expectedCategories));
         when(genreGateway.findById(any())).thenReturn(Optional.of(Genre.with(aGenre)));
         when(genreGateway.update(any())).thenAnswer(returnsFirstArg());
         //when
