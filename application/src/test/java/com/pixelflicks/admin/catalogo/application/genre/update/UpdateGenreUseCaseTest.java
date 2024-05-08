@@ -62,4 +62,9 @@ public class UpdateGenreUseCaseTest {
                 && aGenre.getUpdatedAt().isBefore(aUpdatedGenre.getUpdatedAt())
         ));
     }
+
+
+    private List<String> asString(final List<CategoryID> ids){
+        return ids.stream().map(CategoryID::getValue).toList();
+    }
 }
