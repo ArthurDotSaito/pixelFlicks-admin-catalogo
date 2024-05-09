@@ -126,6 +126,40 @@ public class UpdateGenreUseCaseTest {
         verify(categoryGateway, times(0)).existsByIds(expectedCategories);
     }
 
+    @Test
+    public void givenAnInvalidName_whenCallsUpdateGenreAndSomeCategoriesDoesNotExists_shouldReturnNotificationException(){
+        //given
+        final var filmes = CategoryID.from("123");
+        final var series = CategoryID.from("456");
+        final var documentarios = CategoryID.from("789");
+
+        final var aGenre = Genre.newGenre("acao", true);
+        final var expectedId = aGenre.getId();
+        final String expectedName = null;
+        final var expectedIsActive = true;
+        final var expectedCategories = List.of(filmes, series, documentarios);
+        final var expectedErrorCount = 2;
+        final var expectedErrorMessageOne = "Some categories could not be found: 456, 789";
+        final var expectedErrorMessageTwo = "A 'name' should not be null";
+
+        final var aCommand = UpdateGenreCommand.with(expectedId.getValue(), expectedName, expectedIsActive, asString(expectedCategories));
+        when(genreGateway.findById(any())).thenReturn(Optional.of(Genre.with(aGenre)));
+        when(categoryGateway.existsByIds(any())).thenReturn(List.of(filmes));
+
+        //when
+        final var actualException = Assertions.assertThrows(NotificationException.class, () ->
+                useCase.execute(aCommand)
+        );
+
+        //then
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessageOne, actualException.getErrors().get(0).message());
+        Assertions.assertEquals(expectedErrorMessageTwo, actualException.getErrors().get(1).message());
+
+        verify(genreGateway, times(1)).findById(eq(expectedId));
+        verify(categoryGateway, times(1)).existsByIds(expectedCategories);
+    }
+
 
     private List<String> asString(final List<CategoryID> ids){
         return ids.stream().map(CategoryID::getValue).toList();
