@@ -3,6 +3,7 @@ package com.pixelflicks.admin.catalogo.application.genre.update;
 import com.pixelflicks.admin.catalogo.application.category.update.UpdateCategoryCommand;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
+import com.pixelflicks.admin.catalogo.domain.exceptions.NotificationException;
 import com.pixelflicks.admin.catalogo.domain.genre.Genre;
 import com.pixelflicks.admin.catalogo.domain.genre.GenreGateway;
 import org.junit.jupiter.api.Assertions;
@@ -95,6 +96,34 @@ public class UpdateGenreUseCaseTest {
                         && Objects.isNull(aUpdatedGenre.getDeletedAt())
                         && aGenre.getUpdatedAt().isBefore(aUpdatedGenre.getUpdatedAt())
         ));
+    }
+
+    @Test
+    public void givenAnInvalidName_whenCallsUpdateGenre_shouldReturnNotificationException(){
+        //given
+        final var aGenre = Genre.newGenre("acao", true);
+        final var expectedId = aGenre.getId();
+        final String expectedName = null;
+        final var expectedIsActive = true;
+        final var expectedCategories = List.<CategoryID>of();
+        final var expectedErrorMessage = "A 'name' should not be null";
+        final var expectedErrorCount = 1;
+
+        final var aCommand = UpdateGenreCommand.with(expectedId.getValue(), expectedName, expectedIsActive, asString(expectedCategories));
+        when(genreGateway.findById(any())).thenReturn(Optional.of(Genre.with(aGenre)));
+
+        //when
+        final var actualException = Assertions.assertThrows(NotificationException.class, () ->
+                useCase.execute(aCommand)
+        );
+
+        //then
+        Assertions.assertNotNull(actualException);
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+
+        verify(genreGateway, times(1)).findById(eq(expectedId));
+        verify(categoryGateway, times(0)).existsByIds(expectedCategories);
     }
 
 
