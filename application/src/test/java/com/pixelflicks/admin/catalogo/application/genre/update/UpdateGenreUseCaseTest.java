@@ -1,6 +1,6 @@
 package com.pixelflicks.admin.catalogo.application.genre.update;
 
-import com.pixelflicks.admin.catalogo.application.category.update.UpdateCategoryCommand;
+import com.pixelflicks.admin.catalogo.application.UseCaseTest;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.domain.exceptions.NotificationException;
@@ -8,11 +8,8 @@ import com.pixelflicks.admin.catalogo.domain.genre.Genre;
 import com.pixelflicks.admin.catalogo.domain.genre.GenreGateway;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Objects;
@@ -21,8 +18,7 @@ import java.util.Optional;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class UpdateGenreUseCaseTest {
+public class UpdateGenreUseCaseTest extends UseCaseTest {
 
     @InjectMocks
     private DefaultUpdateGenreUseCase useCase;
@@ -32,6 +28,11 @@ public class UpdateGenreUseCaseTest {
 
     @Mock
     private GenreGateway genreGateway;
+
+    @Override
+    protected List<Object> getMocks() {
+        return List.of(categoryGateway, genreGateway);
+    }
 
     @Test
     public void givenAValidCommand_whenCallsUpdateGenre_shouldReturnGenreId(){

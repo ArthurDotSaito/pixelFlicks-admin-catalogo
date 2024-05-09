@@ -1,16 +1,15 @@
 package com.pixelflicks.admin.catalogo.application.genre.create;
 
+import com.pixelflicks.admin.catalogo.application.UseCaseTest;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.domain.exceptions.NotificationException;
 import com.pixelflicks.admin.catalogo.domain.genre.GenreGateway;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,8 +17,7 @@ import java.util.Objects;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class CreateUseCaseTest {
+public class CreateUseCaseTest extends UseCaseTest {
 
     @InjectMocks
     private DefaultCreateGenreUseCase useCase;
@@ -27,6 +25,11 @@ public class CreateUseCaseTest {
     private CategoryGateway categoryGateway;
     @Mock
     private GenreGateway genreGateway;
+
+    @Override
+    protected List<Object> getMocks() {
+        return List.of(categoryGateway, genreGateway);
+    }
 
     @Test
     public void givenAValidCommand_whenCallsCreateGenre_shouldReturnGenreId(){
@@ -228,4 +231,6 @@ public class CreateUseCaseTest {
     private List<String> asString(final List<CategoryID> categoriesIds){
         return categoriesIds.stream().map(CategoryID::getValue).toList();
     }
+
+
 }
