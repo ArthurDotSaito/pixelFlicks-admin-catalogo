@@ -63,6 +63,40 @@ public class UpdateGenreUseCaseTest {
         ));
     }
 
+    @Test
+    public void givenAValidCommandWithCategories_whenCallsUpdateGenre_shouldReturnGenreId(){
+        //given
+        final var aGenre = Genre.newGenre("acao", true);
+        final var expectedId = aGenre.getId();
+        final var expectedName = "Ação";
+        final var expectedIsActive = true;
+        final var expectedCategories = List.<CategoryID>of(CategoryID.from("123"),CategoryID.from("456"));
+
+        final var aCommand = UpdateGenreCommand.with(expectedId.getValue(), expectedName, expectedIsActive, asString(expectedCategories));
+        when(genreGateway.findById(any())).thenReturn(Optional.of(Genre.with(aGenre)));
+        when(categoryGateway.existsByIds(any())).thenReturn(expectedCategories);
+        when(genreGateway.update(any())).thenAnswer(returnsFirstArg());
+        //when
+        final var actualOutput = useCase.execute(aCommand);
+
+        //then
+        Assertions.assertNotNull(actualOutput);
+        Assertions.assertEquals(expectedId.getValue(), actualOutput.id());
+
+        verify(genreGateway, times(1)).findById(eq(expectedId));
+        verify(categoryGateway, times(1)).existsByIds(expectedCategories);
+
+        verify(genreGateway, times(1)).update(argThat(aUpdatedGenre ->
+                Objects.equals(expectedId, aUpdatedGenre.getId())
+                        && Objects.equals(expectedName, aUpdatedGenre.getName())
+                        && Objects.equals(expectedIsActive, aUpdatedGenre.isActive())
+                        && Objects.equals(expectedCategories, aUpdatedGenre.getCategories())
+                        && Objects.equals(aGenre.getCreatedAt(), aUpdatedGenre.getCreatedAt())
+                        && Objects.isNull(aUpdatedGenre.getDeletedAt())
+                        && aGenre.getUpdatedAt().isBefore(aUpdatedGenre.getUpdatedAt())
+        ));
+    }
+
 
     private List<String> asString(final List<CategoryID> ids){
         return ids.stream().map(CategoryID::getValue).toList();
