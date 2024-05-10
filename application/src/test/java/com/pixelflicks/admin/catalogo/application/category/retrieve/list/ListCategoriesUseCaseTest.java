@@ -1,5 +1,6 @@
 package com.pixelflicks.admin.catalogo.application.category.retrieve.list;
 
+import com.pixelflicks.admin.catalogo.application.UseCaseTest;
 import com.pixelflicks.admin.catalogo.domain.category.Category;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
 import com.pixelflicks.admin.catalogo.domain.pagination.Pagination;
@@ -15,15 +16,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-public class ListCategoriesUseCaseTest {
+public class ListCategoriesUseCaseTest extends UseCaseTest {
 
     @InjectMocks
     private DefaultListCategoriesUseCase useCase;
     @Mock
     private CategoryGateway categoryGateway;
 
-    void cleanUp(){
-        Mockito.reset(categoryGateway);
+    @Override
+    protected List<Object> getMocks() {
+        return List.of(categoryGateway);
     }
 
     @Test

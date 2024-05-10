@@ -1,7 +1,6 @@
 package com.pixelflicks.admin.catalogo.application.genre.update;
 
 import com.pixelflicks.admin.catalogo.domain.Identifier;
-import com.pixelflicks.admin.catalogo.domain.category.Category;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.domain.exceptions.DomainException;
@@ -20,7 +19,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class DefaultUpdateGenreUseCase extends UpdateGenreUseCase{
+public class DefaultUpdateGenreUseCase extends UpdateGenreUseCase {
     private final CategoryGateway categoryGateway;
     private final GenreGateway genreGateway;
 
@@ -42,24 +41,24 @@ public class DefaultUpdateGenreUseCase extends UpdateGenreUseCase{
 
         final var notification = Notification.create();
         notification.append(validateCategories(categories));
-        notification.validate(() -> aGenre.update(aName,isActive, categories));
+        notification.validate(() -> aGenre.update(aName, isActive, categories));
 
-        if(notification.hasErrors()){
+        if (notification.hasErrors()) {
             throw new NotificationException("Could not update a Aggregate Genre %s".formatted(aCommand.id()), notification);
         }
 
         return UpdateGenreOutput.from(this.genreGateway.update(aGenre));
     }
 
-    private ValidationHandler validateCategories(final List<CategoryID> categoriesIds){
+    private ValidationHandler validateCategories(final List<CategoryID> categoriesIds) {
         final var notification = Notification.create();
-        if(categoriesIds == null || categoriesIds.isEmpty()){
+        if (categoriesIds == null || categoriesIds.isEmpty()) {
             return notification;
         }
 
         final var retrievedIds = categoryGateway.existsByIds(categoriesIds);
 
-        if(categoriesIds.size() != retrievedIds.size()){
+        if (categoriesIds.size() != retrievedIds.size()) {
             final var missingIds = new ArrayList<>(categoriesIds);
             missingIds.removeAll(retrievedIds);
 
@@ -71,7 +70,7 @@ public class DefaultUpdateGenreUseCase extends UpdateGenreUseCase{
         return notification;
     }
 
-    private List<CategoryID> toCategoryId(List<String> categories){
+    private List<CategoryID> toCategoryId(List<String> categories) {
         return categories.stream().map(CategoryID::from).toList();
     }
 
