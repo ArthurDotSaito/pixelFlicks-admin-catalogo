@@ -2,8 +2,10 @@ package com.pixelflicks.admin.catalogo.application.genre.retrieve.get;
 
 import com.pixelflicks.admin.catalogo.application.UseCaseTest;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
+import com.pixelflicks.admin.catalogo.domain.exceptions.NotFoundException;
 import com.pixelflicks.admin.catalogo.domain.genre.Genre;
 import com.pixelflicks.admin.catalogo.domain.genre.GenreGateway;
+import com.pixelflicks.admin.catalogo.domain.genre.GenreID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -55,6 +57,23 @@ public class GetGenreUseCaseTest extends UseCaseTest {
         Assertions.assertEquals(aGenre.getDeletedAt()  , actualGenre.deletedAt());
 
         Mockito.verify(genreGateway, times(1)).findById(eq(expectedId));
+    }
+
+    @Test
+    public void givenAValidId_whenCallsGetGenreAndDoesNotExists_shouldReturnNotFound(){
+        //given
+        final var expectedId = GenreID.from("123");
+        final var expectedErrorMessage = "A genre with id '123' was not found";
+
+
+        when(genreGateway.findById(eq(expectedId))).thenReturn(Optional.empty());
+        //when
+        final var actualException = Assertions.assertThrows(NotFoundException.class, () ->
+                useCase.execute(expectedId.getValue())
+        );
+
+        //then
+        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
     }
 
     private List<String> asString(List<CategoryID> categoriesIds){
