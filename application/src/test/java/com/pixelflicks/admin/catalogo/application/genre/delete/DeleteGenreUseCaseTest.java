@@ -43,7 +43,7 @@ public class DeleteGenreUseCaseTest extends UseCaseTest {
     }
 
     @Test
-    public void givenAValidGenreId_whenCallsDeleteGenre_shouldDeleteGenre(){
+    public void givenAnInvalidGenreId_whenCallsDeleteGenre_shouldDoNothing(){
         //given
         final var expectedId = GenreID.from("123");
 
@@ -65,7 +65,7 @@ public class DeleteGenreUseCaseTest extends UseCaseTest {
         doThrow(new IllegalStateException("Gateway Error")).when(genreGateway).deleteById(any());
 
         //when
-        Assertions.assertThrows(IllegalAccessError.class, () -> {
+        Assertions.assertThrows(IllegalStateException.class, () -> {
             useCase.execute(expectedId.getValue());
         });
 
