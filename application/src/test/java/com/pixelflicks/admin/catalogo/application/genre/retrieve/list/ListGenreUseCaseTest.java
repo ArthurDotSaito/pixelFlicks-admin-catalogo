@@ -59,4 +59,36 @@ public class ListGenreUseCaseTest extends UseCaseTest {
 
         verify(genreGateway, times(1)).findAll(aQuery);
     }
+
+    @Test
+    public void givenAValidQuery_whenCallsListGenreAndResultIsEmpty_shouldReturnGenres(){
+        //given
+        final var genres = List.<Genre>of();
+
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "A";
+        final var expectedSort = "createdAt";
+        final var expectedDirection = "asc";
+        final var expectedTotal = 2;
+        final var expectedItems = List.<GenreListOutput>of();
+
+        final var expectedPagination = new Pagination<>(expectedPage,expectedPerPage, expectedTotal, genres);
+
+        when(genreGateway.findAll(any())).thenReturn(expectedPagination);
+
+        //when
+        final var aQuery = new SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection);
+        final var actualOutput = useCase.execute(aQuery);
+
+        //then
+        Assertions.assertEquals(expectedPage, actualOutput.currentPage());
+        Assertions.assertEquals(expectedPerPage, actualOutput.perPage());
+        Assertions.assertEquals(expectedTotal, actualOutput.totalItems());
+        Assertions.assertEquals(expectedItems, actualOutput.items());
+
+        verify(genreGateway, times(1)).findAll(aQuery);
+    }
+
+
 }
