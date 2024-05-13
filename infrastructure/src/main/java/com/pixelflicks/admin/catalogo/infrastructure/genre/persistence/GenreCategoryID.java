@@ -13,7 +13,7 @@ public class GenreCategoryID {
     @Column(name = "category_id", nullable = false)
     private String categoryId;
 
-    private GenreCategoryID(){}
+    public GenreCategoryID(){}
 
     private GenreCategoryID(final String aGenreId, final String aCategoryId){
         this.genreId = aGenreId;
