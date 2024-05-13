@@ -23,7 +23,7 @@ public class GenreCategoryJpaEntity {
         this.genre = aGenre;
     }
 
-    private static GenreCategoryJpaEntity from(final GenreJpaEntity aGenre, final CategoryID aCategoryId){
+    public static GenreCategoryJpaEntity from(final GenreJpaEntity aGenre, final CategoryID aCategoryId){
         return new GenreCategoryJpaEntity(aGenre, aCategoryId);
     }
 
