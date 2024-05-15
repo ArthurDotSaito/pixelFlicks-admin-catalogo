@@ -2,10 +2,12 @@ package com.pixelflicks.admin.catalogo.infrastructure.genre.persistence;
 
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.domain.genre.Genre;
+import com.pixelflicks.admin.catalogo.domain.genre.GenreID;
 
 import javax.persistence.*;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -61,6 +63,18 @@ public class GenreJpaEntity {
         return aEntity;
     }
 
+    public Genre toAggregate(){
+        return Genre.with(
+                GenreID.from(getId()),
+                getName(),
+                getCategoryIDs(),
+                isActive(),
+                getCreatedAt(),
+                getUpdatedAt(),
+                getDeletedAt()
+        );
+    }
+
     private void addCategory(final CategoryID anId) {
         this.categories.add(GenreCategoryJpaEntity.from(this, anId));
     }
@@ -95,6 +109,10 @@ public class GenreJpaEntity {
 
     public Set<GenreCategoryJpaEntity> getCategories() {
         return categories;
+    }
+
+    public List<CategoryID> getCategoryIDs(){
+        return getCategories().stream().map(it-> CategoryID.from(it.getId().getCategoryId())).toList();
     }
 
     public void setCategories(Set<GenreCategoryJpaEntity> categories) {
