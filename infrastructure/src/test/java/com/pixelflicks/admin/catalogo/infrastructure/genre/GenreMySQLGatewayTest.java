@@ -5,6 +5,7 @@ import com.pixelflicks.admin.catalogo.domain.category.Category;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.domain.genre.Genre;
 import com.pixelflicks.admin.catalogo.domain.genre.GenreID;
+import com.pixelflicks.admin.catalogo.domain.pagination.SearchQuery;
 import com.pixelflicks.admin.catalogo.infrastructure.category.CategoryMySQLGateway;
 import com.pixelflicks.admin.catalogo.infrastructure.genre.persistence.GenreJpaEntity;
 import com.pixelflicks.admin.catalogo.infrastructure.genre.persistence.GenreRepository;
@@ -290,10 +291,6 @@ public class GenreMySQLGatewayTest {
         Assertions.assertEquals(0, genreRepository.count());
     }
 
-    private List<CategoryID> sorted(final List<CategoryID> expectedCategories){
-        return expectedCategories.stream().sorted(Comparator.comparing(CategoryID::getValue)).toList();
-    }
-
     @Test
     public void givenAPrePersistedGenre_whenCallsFindById_shouldReturnGenre(){
         //given
@@ -338,6 +335,32 @@ public class GenreMySQLGatewayTest {
 
         // then
         Assertions.assertTrue(actualGenre.isEmpty());
+    }
+
+    @Test
+    public void givenEmptyGenres_whenCallFindAll_shouldReturnEmptyList(){
+        //given
+        final var expectedPage = 0;
+        final var expectedPerPage = 1;
+        final var expectedTerms = "";
+        final var expectedSort = "name";
+        final var expectedDirection = "asc";
+        final var expectedTotal = "asc";
+
+        final var aQuery = new SearchQuery(expectedPage, expectedPerPage, expectedTerms,expectedSort,expectedDirection);
+
+        //when
+        final var actualPage = genreGateway.findAll(aQuery);
+
+        //then
+        Assertions.assertEquals(expectedPage, actualPage.currentPage());
+        Assertions.assertEquals(expectedPerPage, actualPage.perPage());
+        Assertions.assertEquals(expectedTotal, actualPage.total());
+        Assertions.assertEquals(expectedTotal, actualPage.items().size());
+    }
+
+    private List<CategoryID> sorted(final List<CategoryID> expectedCategories){
+        return expectedCategories.stream().sorted(Comparator.comparing(CategoryID::getValue)).toList();
     }
 
 }
