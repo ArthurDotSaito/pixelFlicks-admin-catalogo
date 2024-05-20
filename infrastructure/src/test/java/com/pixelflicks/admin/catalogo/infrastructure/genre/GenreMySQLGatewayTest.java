@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @MySQLGatewayTest
 public class GenreMySQLGatewayTest {
@@ -347,7 +346,7 @@ public class GenreMySQLGatewayTest {
         final var expectedTerms = "";
         final var expectedSort = "name";
         final var expectedDirection = "asc";
-        final var expectedTotal = "asc";
+        final var expectedTotal = 0;
 
         final var aQuery = new SearchQuery(expectedPage, expectedPerPage, expectedTerms,expectedSort,expectedDirection);
 
@@ -364,11 +363,11 @@ public class GenreMySQLGatewayTest {
 
     @ParameterizedTest
     @CsvSource({
-            "aç,0,10,1,1,1,Ação",
-            "dr,0,10,1,1,1,Drama",
-            "com,0,10,1,1,1,Comédia romântica",
-            "cie,0,10,1,1,1,Ficção científica",
-            "terr,0,10,1,1,1,Terror",
+            "aç,0,10,1,1,Ação",
+            "dr,0,10,1,1,Drama",
+            "com,0,10,1,1,Comédia romântica",
+            "cie,0,10,1,1,Ficção científica",
+            "terr,0,10,1,1,Terror",
     })
     public void givenAValidTerm_whenCallsFindAll_shouldReturnFiltered(
             final String expectedTerms,

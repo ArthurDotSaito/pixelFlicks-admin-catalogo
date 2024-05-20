@@ -7,6 +7,7 @@ import com.pixelflicks.admin.catalogo.domain.pagination.Pagination;
 import com.pixelflicks.admin.catalogo.domain.pagination.SearchQuery;
 import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity;
 import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.CategoryRepository;
+import com.pixelflicks.admin.catalogo.infrastructure.genre.persistence.GenreJpaEntity;
 import com.pixelflicks.admin.catalogo.infrastructure.utils.SpecificationUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static com.pixelflicks.admin.catalogo.infrastructure.utils.SpecificationUtils.like;
 
 @Component
 public class CategoryMySQLGateway implements CategoryGateway {
@@ -56,10 +59,7 @@ public class CategoryMySQLGateway implements CategoryGateway {
 
         final var specifications = Optional.ofNullable(aQuery.terms())
                 .filter(str -> !str.isBlank())
-                .map(str -> SpecificationUtils
-                        .<CategoryJpaEntity>like("name", str)
-                        .or(SpecificationUtils.like("description", str))
-                )
+                .map(this::assembleSpecification)
                 .orElse(null);
 
         final var pageResult = this.repository.findAll(Specification.where(specifications), page);
@@ -79,5 +79,11 @@ public class CategoryMySQLGateway implements CategoryGateway {
 
     private Category save(final Category aCategory){
         return this.repository.save(CategoryJpaEntity.from(aCategory)).toAggregate();
+    }
+
+    private Specification<CategoryJpaEntity> assembleSpecification(final String str){
+        final Specification<CategoryJpaEntity> nameLike = like("name", str);
+        final Specification<CategoryJpaEntity> descriptionLike = like("description", str);
+        return nameLike.or(descriptionLike);
     }
 }
