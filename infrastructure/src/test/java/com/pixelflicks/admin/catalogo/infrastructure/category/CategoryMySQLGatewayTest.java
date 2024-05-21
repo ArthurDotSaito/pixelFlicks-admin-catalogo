@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Comparator;
 import java.util.List;
 
 @MySQLGatewayTest
@@ -287,5 +288,31 @@ public class CategoryMySQLGatewayTest {
         Assertions.assertEquals(total, actualResult.total());
         Assertions.assertEquals(expectedPerPage, actualResult.items().size());
         Assertions.assertEquals(filmes.getId(), actualResult.items().get(0).getId());
+    }
+
+    @Test
+    public void givenAPrePersistedCategories_whenCallsExistsByIds_shouldReturnIds(){
+        //given
+        final var filmes = Category.newCategory("Filmes", "A categoria mais assistida", true);
+        final var series = Category.newCategory("Series", "Uma categoria assistida", true);
+        final var documentarios = Category.newCategory("Documentarios", "A categoria menos assistida", true);
+
+        Assertions.assertEquals(0, categoryRepository.count());
+
+        categoryRepository.saveAll(List.of(
+                CategoryJpaEntity.from(filmes),
+                CategoryJpaEntity.from(series),
+                CategoryJpaEntity.from(documentarios)));
+
+        Assertions.assertEquals(3, categoryRepository.count());
+
+        final var expectedIds = List.of(filmes.getId(), series.getId());
+        final var ids = List.of(filmes.getId(), series.getId(), CategoryID.from("123"));
+
+        //when
+        final var actualResult = categoryGateway.existsByIds(ids);
+
+        //then
+        Assertions.assertEquals(expectedIds, actualResult);
     }
 }
