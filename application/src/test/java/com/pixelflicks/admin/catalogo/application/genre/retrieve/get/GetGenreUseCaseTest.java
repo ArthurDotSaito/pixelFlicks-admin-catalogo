@@ -63,7 +63,7 @@ public class GetGenreUseCaseTest extends UseCaseTest {
     public void givenAValidId_whenCallsGetGenreAndDoesNotExists_shouldReturnNotFound(){
         //given
         final var expectedId = GenreID.from("123");
-        final var expectedErrorMessage = "A genre with id '123' was not found";
+        final var expectedErrorMessage = "Genre with Id 123 was not found";
 
 
         when(genreGateway.findById(eq(expectedId))).thenReturn(Optional.empty());
