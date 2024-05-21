@@ -25,6 +25,7 @@ public class CreateCategoryUseCaseIT {
 
     @Test
     public void givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId(){
+
         final var expectedName = "Filmes";
         final var expectedDescription = "A categoria mais assistida";
         final var expectedIsActive = true;

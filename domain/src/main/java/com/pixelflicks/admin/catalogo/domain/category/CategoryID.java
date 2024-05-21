@@ -8,8 +8,7 @@ import java.util.UUID;
 public class CategoryID extends Identifier {
     private final String value;
     private CategoryID(final String value) {
-        Objects.requireNonNull(value);
-        this.value = value;
+        this.value = Objects.requireNonNull(value);
     }
     public static CategoryID unique(){
         return CategoryID.from(UUID.randomUUID());
@@ -29,8 +28,8 @@ public class CategoryID extends Identifier {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CategoryID that = (CategoryID) o;
-        return Objects.equals(getValue(), that.getValue());
+        final CategoryID that = (CategoryID) o;
+        return getValue().equals(that.getValue());
     }
     @Override
     public int hashCode() {
