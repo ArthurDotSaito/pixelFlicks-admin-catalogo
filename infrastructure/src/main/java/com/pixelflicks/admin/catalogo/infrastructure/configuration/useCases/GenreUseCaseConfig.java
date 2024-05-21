@@ -17,9 +17,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class GenreUseCaseConfig {
-
     private final CategoryGateway categoryGateway;
-
     private final GenreGateway genreGateway;
 
     public GenreUseCaseConfig(CategoryGateway categoryGateway, GenreGateway genreGateway) {
@@ -31,7 +29,6 @@ public class GenreUseCaseConfig {
     public CreateGenreUseCase createGenreUseCase(){
         return new DefaultCreateGenreUseCase(categoryGateway, genreGateway);
     }
-
     @Bean
     public DeleteGenreUseCase deleteGenreUseCase(){
         return new DefaultDeleteGenreUseCase(genreGateway);
