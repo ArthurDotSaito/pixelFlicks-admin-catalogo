@@ -1,6 +1,7 @@
 package com.pixelflicks.admin.catalogo.application.genre.create;
 
 import com.pixelflicks.admin.catalogo.IntegrationTest;
+import com.pixelflicks.admin.catalogo.domain.category.Category;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryGateway;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.domain.genre.GenreGateway;
@@ -34,13 +35,13 @@ public class CreateGenreUseCaseIT {
 
     public void givenAValidCommand_whenCallsCreateGenre_shouldReturnGenreId(){
         //given
+        final var filmes = categoryGateway.create(Category.newCategory("Filmes",null, true));
         final var expectedName = "Ação";
         final var expectedIsActive = true;
-        final var expectedCategories = List.<CategoryID>of();
+        final var expectedCategories = List.<CategoryID>of(filmes.getId());
 
         final var aCommand = CreateGenreCommand.with(expectedName,expectedIsActive, asString(expectedCategories));
-        when(genreGateway.create(any()))
-                .thenAnswer(returnsFirstArg());
+
         //when
         final var actualOutput = useCase.execute(aCommand);
 
@@ -56,6 +57,15 @@ public class CreateGenreUseCaseIT {
                         && Objects.nonNull(aGenre.getUpdatedAt())
                         && Objects.isNull(aGenre.getDeletedAt())
         ));
+
+        final var actualGenre = genreRepository.findById(actualOutput.id()).get();
+        Assertions.assertNotNull(actualGenre.getCreatedAt());
+        Assertions.assertNotNull(actualGenre.getUpdatedAt());
+        Assertions.assertNull(actualGenre.getDeletedAt());
+        Assertions.assertEquals(expectedName, actualGenre.getName());
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive());
+        Assertions.assertTrue(expectedCategories.size() == actualGenre.getCategoryIDs().size()
+        && expectedCategories.containsAll(actualGenre.getCategoryIDs()));
     }
 
     private List<String> asString(final List<CategoryID> categoriesIds){
