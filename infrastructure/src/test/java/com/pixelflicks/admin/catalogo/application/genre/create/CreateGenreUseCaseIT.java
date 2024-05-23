@@ -88,6 +88,32 @@ public class CreateGenreUseCaseIT {
                 && expectedCategories.containsAll(actualGenre.getCategoryIDs()));
     }
 
+    @Test
+    public void givenAValidCommandWithInactive_whenCallsCreateGenre_shouldReturnGenreId(){
+        //given
+        final var expectedName = "Ação";
+        final var expectedIsActive = false;
+        final var expectedCategories = List.<CategoryID>of();
+
+        final var aCommand = CreateGenreCommand.with(expectedName,expectedIsActive, asString(expectedCategories));
+        //when
+        final var actualOutput = useCase.execute(aCommand);
+
+        //then
+        Assertions.assertNotNull(actualOutput);
+        Assertions.assertNotNull(actualOutput.id());
+
+        final var actualGenre = genreRepository.findById(actualOutput.id()).get();
+
+        Assertions.assertNotNull(actualGenre.getCreatedAt());
+        Assertions.assertNotNull(actualGenre.getUpdatedAt());
+        Assertions.assertNotNull(actualGenre.getDeletedAt());
+        Assertions.assertEquals(expectedName, actualGenre.getName());
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive());
+        Assertions.assertTrue(expectedCategories.size() == actualGenre.getCategoryIDs().size()
+                && expectedCategories.containsAll(actualGenre.getCategoryIDs()));
+    }
+
     private List<String> asString(final List<CategoryID> categoriesIds){
         return categoriesIds.stream().map(CategoryID::getValue).toList();
     }
