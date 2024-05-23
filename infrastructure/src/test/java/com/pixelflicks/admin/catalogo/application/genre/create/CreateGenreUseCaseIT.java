@@ -165,7 +165,7 @@ public class CreateGenreUseCaseIT {
         verify(categoryGateway, times(0)).existsByIds(any());
         verify(genreGateway, times(0)).create(any());
     }
-    
+
     @Test
     public void givenAInvalidName_whenCallsCreateGenreAndSomeCategoriesDoesNotExist_shouldReturnDomainException(){
         //given
