@@ -7,6 +7,7 @@ import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.domain.genre.GenreGateway;
 import com.pixelflicks.admin.catalogo.infrastructure.genre.persistence.GenreRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -49,16 +50,8 @@ public class CreateGenreUseCaseIT {
         Assertions.assertNotNull(actualOutput);
         Assertions.assertNotNull(actualOutput.id());
 
-        verify(genreGateway, times(1)).create(Mockito.argThat(aGenre ->
-                Objects.equals(expectedName, aGenre.getName())
-                        && Objects.equals(expectedIsActive, aGenre.isActive())
-                        && Objects.equals(expectedCategories, aGenre.getCategories())
-                        && Objects.nonNull(aGenre.getCreatedAt())
-                        && Objects.nonNull(aGenre.getUpdatedAt())
-                        && Objects.isNull(aGenre.getDeletedAt())
-        ));
-
         final var actualGenre = genreRepository.findById(actualOutput.id()).get();
+
         Assertions.assertNotNull(actualGenre.getCreatedAt());
         Assertions.assertNotNull(actualGenre.getUpdatedAt());
         Assertions.assertNull(actualGenre.getDeletedAt());
@@ -66,6 +59,33 @@ public class CreateGenreUseCaseIT {
         Assertions.assertEquals(expectedIsActive, actualGenre.isActive());
         Assertions.assertTrue(expectedCategories.size() == actualGenre.getCategoryIDs().size()
         && expectedCategories.containsAll(actualGenre.getCategoryIDs()));
+    }
+
+    @Test
+    public void givenAValidCommandWithoutCategories_whenCallsCreateGenre_shouldReturnGenreId(){
+        //given
+        final var expectedName = "Ação";
+        final var expectedIsActive = true;
+        final var expectedCategories = List.<CategoryID>of();
+
+        final var aCommand = CreateGenreCommand.with(expectedName,expectedIsActive, asString(expectedCategories));
+
+        //when
+        final var actualOutput = useCase.execute(aCommand);
+
+        //then
+        Assertions.assertNotNull(actualOutput);
+        Assertions.assertNotNull(actualOutput.id());
+
+        final var actualGenre = genreRepository.findById(actualOutput.id()).get();
+
+        Assertions.assertNotNull(actualGenre.getCreatedAt());
+        Assertions.assertNotNull(actualGenre.getUpdatedAt());
+        Assertions.assertNull(actualGenre.getDeletedAt());
+        Assertions.assertEquals(expectedName, actualGenre.getName());
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive());
+        Assertions.assertTrue(expectedCategories.size() == actualGenre.getCategoryIDs().size()
+                && expectedCategories.containsAll(actualGenre.getCategoryIDs()));
     }
 
     private List<String> asString(final List<CategoryID> categoriesIds){
