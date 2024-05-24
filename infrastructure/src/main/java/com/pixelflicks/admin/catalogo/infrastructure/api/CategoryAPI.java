@@ -35,7 +35,7 @@ public interface CategoryAPI {
     @ApiResponses(value={
             @ApiResponse(responseCode = "200", description = "Listed successfully"),
             @ApiResponse(responseCode = "422", description = "Invalid parameter was received"),
-            @ApiResponse(responseCode = "422", description = "Internal server error"),
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
     })
     Pagination<?> listCategories(
             @RequestParam(name = "search", required = false, defaultValue = "") final String search,
@@ -51,8 +51,8 @@ public interface CategoryAPI {
     @Operation(summary = "Get a category by it's identifier")
     @ApiResponses(value={
             @ApiResponse(responseCode = "200", description = "Category retrieved successfully"),
-            @ApiResponse(responseCode = "422", description = "Category was not found"),
-            @ApiResponse(responseCode = "422", description = "Internal server error"),
+            @ApiResponse(responseCode = "404", description = "Category was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
     })
     CategoryResponse getById(@PathVariable(name = "id") String id);
 
@@ -64,8 +64,8 @@ public interface CategoryAPI {
     @Operation(summary = "Update a category by it's identifier")
     @ApiResponses(value={
             @ApiResponse(responseCode = "200", description = "Category updated successfully"),
-            @ApiResponse(responseCode = "422", description = "Category was not found"),
-            @ApiResponse(responseCode = "422", description = "Internal server error"),
+            @ApiResponse(responseCode = "404", description = "Category was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
     })
     ResponseEntity<?> updateById(@PathVariable(name = "id") String id, @RequestBody UpdateCategoryRequest input);
 
@@ -76,8 +76,8 @@ public interface CategoryAPI {
     @Operation(summary = "Delete a category by it's identifier")
     @ApiResponses(value={
             @ApiResponse(responseCode = "200", description = "Category deleted successfully"),
-            @ApiResponse(responseCode = "422", description = "Category was not found"),
-            @ApiResponse(responseCode = "422", description = "Internal server error"),
+            @ApiResponse(responseCode = "404", description = "Category was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
     })
     void deleteById(@PathVariable(name = "id") String id);
 }
