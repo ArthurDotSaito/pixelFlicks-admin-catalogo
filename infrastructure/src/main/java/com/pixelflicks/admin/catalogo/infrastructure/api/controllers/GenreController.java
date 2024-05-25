@@ -1,5 +1,7 @@
 package com.pixelflicks.admin.catalogo.infrastructure.api.controllers;
 
+import com.pixelflicks.admin.catalogo.application.genre.create.CreateGenreCommand;
+import com.pixelflicks.admin.catalogo.application.genre.create.CreateGenreUseCase;
 import com.pixelflicks.admin.catalogo.domain.pagination.Pagination;
 import com.pixelflicks.admin.catalogo.infrastructure.api.GenreAPI;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest;
@@ -10,11 +12,25 @@ import com.pixelflicks.admin.catalogo.infrastructure.genre.models.UpdateGenreReq
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
+
 @RestController
 public class GenreController implements GenreAPI {
+
+    private final CreateGenreUseCase createGenreUseCase;
+
+    public GenreController(CreateGenreUseCase createGenreUseCase) {
+        this.createGenreUseCase = createGenreUseCase;
+    }
+
     @Override
     public ResponseEntity<?> create(CreateGenreRequest request) {
-        return null;
+        final var aCommand = CreateGenreCommand.with(request.name(), request.isActive(), request.categories());
+
+        final var response = this.createGenreUseCase.execute(aCommand);
+
+        return ResponseEntity.created(URI.create("/genres/" + response.id()))
+                .body(response);
     }
 
     @Override

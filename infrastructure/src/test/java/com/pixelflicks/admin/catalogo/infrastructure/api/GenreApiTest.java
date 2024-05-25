@@ -33,7 +33,6 @@ public class GenreApiTest {
 
     @MockBean
     private CreateGenreUseCase createGenreUseCase;
-
     @Test
     public void givenAValidCommand_whenCallsCreateGenre_shouldReturnGenreId() throws Exception{
         //given
@@ -60,10 +59,10 @@ public class GenreApiTest {
                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE));
 
         verify(createGenreUseCase).execute(argThat(cmd ->
-                        Objects.equals(expectedName, cmd.name())
-                && Objects.equals(expectedCategories, cmd.categories())
-                && Objects.equals(expectedIsActive, cmd.isActive())
-                ));
+                Objects.equals(expectedName, cmd.name())
+                        && Objects.equals(expectedCategories, cmd.categories())
+                        && Objects.equals(expectedIsActive, cmd.isActive())
+        ));
     }
 
     @Test
