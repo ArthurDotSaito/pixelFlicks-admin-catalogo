@@ -4,10 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pixelflicks.admin.catalogo.ControllerTest;
 import com.pixelflicks.admin.catalogo.application.genre.create.CreateGenreOutput;
 import com.pixelflicks.admin.catalogo.application.genre.create.CreateGenreUseCase;
+import com.pixelflicks.admin.catalogo.application.genre.retrieve.get.GenreOutput;
+import com.pixelflicks.admin.catalogo.application.genre.retrieve.get.GetGenreByIdUseCase;
+import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
+import com.pixelflicks.admin.catalogo.domain.exceptions.NotFoundException;
 import com.pixelflicks.admin.catalogo.domain.exceptions.NotificationException;
+import com.pixelflicks.admin.catalogo.domain.genre.Genre;
+import com.pixelflicks.admin.catalogo.domain.genre.GenreID;
+import com.pixelflicks.admin.catalogo.domain.validation.Error;
 import com.pixelflicks.admin.catalogo.domain.validation.handler.Notification;
 import com.pixelflicks.admin.catalogo.infrastructure.genre.models.CreateGenreRequest;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -17,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -33,6 +42,9 @@ public class GenreApiTest {
 
     @MockBean
     private CreateGenreUseCase createGenreUseCase;
+
+    @MockBean
+    private GetGenreByIdUseCase getGenreByIdUseCase;
     @Test
     public void givenAValidCommand_whenCallsCreateGenre_shouldReturnGenreId() throws Exception{
         //given
@@ -98,5 +110,63 @@ public class GenreApiTest {
                         && Objects.equals(expectedCategories, cmd.categories())
                         && Objects.equals(expectedIsActive, cmd.isActive())
         ));
+    }
+
+    @Test
+    public void givenAValidId_whenCallsGetGenreById_shouldReturnGenre() throws Exception{
+        //given
+        final var expectedName = "Ação";
+        final var expectedCategories = List.of("123", "456");
+        final var expectedIsActive = true;
+
+        final var aGenre = Genre.newGenre(expectedName, expectedIsActive)
+                .addCategories(expectedCategories.stream().map(CategoryID::from).toList()
+                );
+
+        when(getGenreByIdUseCase.execute(any()))
+                .thenReturn(GenreOutput.from(aGenre));
+
+        final var expectedId = aGenre.getId().getValue();
+        //when
+        final var aRequest = get("/genres/{id}" , expectedId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(aRequest);
+        //then
+        response.andExpect(status().isOk())
+                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.id", equalTo(expectedId)))
+                .andExpect(jsonPath("$.name", equalTo(expectedName)))
+                .andExpect(jsonPath("$.categories", equalTo(expectedCategories)))
+                .andExpect(jsonPath("$.is_active", equalTo(expectedIsActive)))
+                .andExpect(jsonPath("$.created_at", equalTo(aGenre.getCreatedAt().toString())))
+                .andExpect(jsonPath("$.updated_at", equalTo(aGenre.getUpdatedAt().toString())))
+                .andExpect(jsonPath("$.deleted_at", equalTo(aGenre.getDeletedAt().toString())));
+
+        verify(getGenreByIdUseCase).execute(eq(expectedId));
+    }
+
+    @Test
+    public void givenAInvalidId_whenCallsGetGenreById_shouldReturnNotFound() throws Exception{
+        //given
+        final var expectedErrorMessage = "Genre with ID 123 was not found";
+        final var expectedId = GenreID.from("123");
+
+        when(getGenreByIdUseCase.execute(any()))
+                .thenThrow(NotFoundException.with(Genre.class, expectedId));
+
+        //when
+        final var aRequest = get("/genres/{id}" , expectedId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(aRequest);
+        //then
+        response.andExpect(status().isNotFound())
+                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+
+        verify(getGenreByIdUseCase).execute(eq(expectedId.getValue()));
     }
 }
