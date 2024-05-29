@@ -3,6 +3,8 @@ package com.pixelflicks.admin.catalogo.infrastructure.api.controllers;
 import com.pixelflicks.admin.catalogo.application.genre.create.CreateGenreCommand;
 import com.pixelflicks.admin.catalogo.application.genre.create.CreateGenreUseCase;
 import com.pixelflicks.admin.catalogo.application.genre.retrieve.get.GetGenreByIdUseCase;
+import com.pixelflicks.admin.catalogo.application.genre.update.UpdateGenreCommand;
+import com.pixelflicks.admin.catalogo.application.genre.update.UpdateGenreUseCase;
 import com.pixelflicks.admin.catalogo.domain.pagination.Pagination;
 import com.pixelflicks.admin.catalogo.infrastructure.api.GenreAPI;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest;
@@ -22,11 +24,15 @@ public class GenreController implements GenreAPI {
     private final CreateGenreUseCase createGenreUseCase;
     private final GetGenreByIdUseCase getGenreById;
 
+    private final UpdateGenreUseCase updateGenre;
+
     public GenreController(
             final CreateGenreUseCase createGenreUseCase,
-            final GetGenreByIdUseCase getGenreById) {
+            final GetGenreByIdUseCase getGenreById,
+            final UpdateGenreUseCase updateGenre) {
         this.createGenreUseCase = createGenreUseCase;
         this.getGenreById = getGenreById;
+        this.updateGenre = updateGenre;
     }
 
     @Override
@@ -50,8 +56,18 @@ public class GenreController implements GenreAPI {
     }
 
     @Override
-    public ResponseEntity<?> updateById(String id, UpdateGenreRequest bodyParams) {
-        return null;
+    public ResponseEntity<?> updateById(final String id, final UpdateGenreRequest bodyParams)
+    {
+        final var aCommand = UpdateGenreCommand.with(
+                id,
+                bodyParams.name(),
+                bodyParams.isActive(),
+                bodyParams.categories()
+        );
+
+        final var output = this.updateGenre.execute(aCommand);
+
+        return ResponseEntity.ok(output);
     }
 
     @Override
