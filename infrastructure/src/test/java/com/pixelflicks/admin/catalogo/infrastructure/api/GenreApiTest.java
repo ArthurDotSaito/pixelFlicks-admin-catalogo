@@ -217,7 +217,7 @@ public class GenreApiTest {
         final var expectedIsActive = true;
         final var expectedErrorMessage = "'name' should not be null";
 
-        final var aGenre = Genre.newGenre(expectedName, expectedIsActive);
+        final var aGenre = Genre.newGenre("Ação", expectedIsActive);
         final var expectedId = aGenre.getId().getValue();
 
         final var aCommand = new UpdateGenreRequest(expectedName, expectedCategories,expectedIsActive);
