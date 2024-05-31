@@ -84,5 +84,5 @@ public interface GenreAPI {
             @ApiResponse(responseCode = "404", description = "Genre was not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
     })
-    void deleteById(@PathVariable(name = "id") String id, @RequestBody UpdateCategoryRequest request);
+    void deleteById(@PathVariable(name = "id") String id);
 }

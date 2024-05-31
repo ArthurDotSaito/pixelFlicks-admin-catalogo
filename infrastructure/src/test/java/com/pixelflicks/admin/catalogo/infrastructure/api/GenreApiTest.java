@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pixelflicks.admin.catalogo.ControllerTest;
 import com.pixelflicks.admin.catalogo.application.genre.create.CreateGenreOutput;
 import com.pixelflicks.admin.catalogo.application.genre.create.CreateGenreUseCase;
+import com.pixelflicks.admin.catalogo.application.genre.delete.DeleteGenreUseCase;
 import com.pixelflicks.admin.catalogo.application.genre.retrieve.get.GenreOutput;
 import com.pixelflicks.admin.catalogo.application.genre.retrieve.get.GetGenreByIdUseCase;
 import com.pixelflicks.admin.catalogo.application.genre.update.UpdateGenreOutput;
@@ -50,6 +51,9 @@ public class GenreApiTest {
 
     @MockBean
     private UpdateGenreUseCase updateGenreUseCase;
+
+    @MockBean
+    private DeleteGenreUseCase deleteGenreUseCase;
 
     @Test
     public void givenAValidCommand_whenCallsCreateGenre_shouldReturnGenreId() throws Exception{
@@ -245,6 +249,40 @@ public class GenreApiTest {
                         && Objects.equals(expectedCategories, cmd.categories())
                         && Objects.equals(expectedIsActive, cmd.isActive())
         ));
+    }
+
+    @Test
+    public void givenAValidId_whenCallsDeleteGenre_shouldBeOk() throws Exception{
+        //given
+        final var expectedId = "123";
+
+        doNothing().when(deleteGenreUseCase).execute(any());
+        //when
+        final var aRequest = delete("/genres/{id}", expectedId)
+                .accept(MediaType.APPLICATION_JSON);
+
+        final var result = this.mvc.perform(aRequest);
+        //then
+        result.andExpect(status().isNoContent());
+
+        verify(deleteGenreUseCase).execute(expectedId);
+    }
+
+    @Test
+    public void givenAInvalidId_whenCallsDeleteGenre_shouldBeOk() throws Exception{
+        //given
+        final var expectedId = "invalid-123";
+
+        doNothing().when(deleteGenreUseCase).execute(any());
+        //when
+        final var aRequest = delete("/genres/{id}", expectedId)
+                .accept(MediaType.APPLICATION_JSON);
+
+        final var result = this.mvc.perform(aRequest);
+        //then
+        result.andExpect(status().isNoContent());
+
+        verify(deleteGenreUseCase).execute(expectedId);
     }
 
 }
