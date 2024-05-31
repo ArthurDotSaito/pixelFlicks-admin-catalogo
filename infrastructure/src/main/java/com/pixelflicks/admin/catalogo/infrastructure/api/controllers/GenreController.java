@@ -2,6 +2,7 @@ package com.pixelflicks.admin.catalogo.infrastructure.api.controllers;
 
 import com.pixelflicks.admin.catalogo.application.genre.create.CreateGenreCommand;
 import com.pixelflicks.admin.catalogo.application.genre.create.CreateGenreUseCase;
+import com.pixelflicks.admin.catalogo.application.genre.delete.DeleteGenreUseCase;
 import com.pixelflicks.admin.catalogo.application.genre.retrieve.get.GetGenreByIdUseCase;
 import com.pixelflicks.admin.catalogo.application.genre.update.UpdateGenreCommand;
 import com.pixelflicks.admin.catalogo.application.genre.update.UpdateGenreUseCase;
@@ -23,16 +24,18 @@ public class GenreController implements GenreAPI {
 
     private final CreateGenreUseCase createGenreUseCase;
     private final GetGenreByIdUseCase getGenreById;
-
     private final UpdateGenreUseCase updateGenre;
+    private final DeleteGenreUseCase deleteGenre;
 
     public GenreController(
             final CreateGenreUseCase createGenreUseCase,
             final GetGenreByIdUseCase getGenreById,
-            final UpdateGenreUseCase updateGenre) {
+            final UpdateGenreUseCase updateGenre,
+            final DeleteGenreUseCase deleteGenre) {
         this.createGenreUseCase = createGenreUseCase;
         this.getGenreById = getGenreById;
         this.updateGenre = updateGenre;
+        this.deleteGenre = deleteGenre;
     }
 
     @Override
@@ -71,7 +74,7 @@ public class GenreController implements GenreAPI {
     }
 
     @Override
-    public void deleteById(String id, UpdateCategoryRequest request) {
-
+    public void deleteById(final String id) {
+        this.deleteGenre.execute(id);
     }
 }
