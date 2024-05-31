@@ -268,4 +268,21 @@ public class GenreApiTest {
         verify(deleteGenreUseCase).execute(expectedId);
     }
 
+    @Test
+    public void givenAInvalidId_whenCallsDeleteGenre_shouldBeOk() throws Exception{
+        //given
+        final var expectedId = "invalid-123";
+
+        doNothing().when(deleteGenreUseCase).execute(any());
+        //when
+        final var aRequest = delete("/genres/{id}", expectedId)
+                .accept(MediaType.APPLICATION_JSON);
+
+        final var result = this.mvc.perform(aRequest);
+        //then
+        result.andExpect(status().isNoContent());
+
+        verify(deleteGenreUseCase).execute(expectedId);
+    }
+
 }
