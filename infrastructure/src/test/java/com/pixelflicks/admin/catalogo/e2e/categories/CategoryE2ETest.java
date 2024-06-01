@@ -1,13 +1,9 @@
 package com.pixelflicks.admin.catalogo.e2e.categories;
 
 import com.pixelflicks.admin.catalogo.E2ETest;
-import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.e2e.MockDsl;
-import com.pixelflicks.admin.catalogo.infrastructure.category.models.CategoryResponse;
-import com.pixelflicks.admin.catalogo.infrastructure.category.models.CreateCategoryRequest;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest;
 import com.pixelflicks.admin.catalogo.infrastructure.category.persistence.CategoryRepository;
-import com.pixelflicks.admin.catalogo.infrastructure.configuration.json.Json;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +11,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -200,11 +195,7 @@ public class CategoryE2ETest implements MockDsl {
 
         final var requestBody = new UpdateCategoryRequest(expectedName,expectedDescription,expectedIsActive);
 
-        final var aRequest = put("/categories/" + actualId.getValue())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(Json.writeValueAsString(requestBody));
-
-        this.mvc.perform(aRequest).andExpect(status().isOk());
+        updateACategory(actualId, requestBody).andExpect(status().isOk());
 
         var actualCategory = categoryRepository.findById(actualId.getValue()).get();
 
@@ -229,11 +220,7 @@ public class CategoryE2ETest implements MockDsl {
 
         final var requestBody = new UpdateCategoryRequest(expectedName,expectedDescription,expectedIsActive);
 
-        final var aRequest = put("/categories/" + actualId.getValue())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(Json.writeValueAsString(requestBody));
-
-        this.mvc.perform(aRequest).andExpect(status().isOk());
+        updateACategory(actualId, requestBody).andExpect(status().isOk());
 
         var actualCategory = categoryRepository.findById(actualId.getValue()).get();
 
@@ -258,11 +245,7 @@ public class CategoryE2ETest implements MockDsl {
 
         final var requestBody = new UpdateCategoryRequest(expectedName,expectedDescription,expectedIsActive);
 
-        final var aRequest = put("/categories/" + actualId.getValue())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(Json.writeValueAsString(requestBody));
-
-        this.mvc.perform(aRequest).andExpect(status().isOk());
+        updateACategory(actualId, requestBody).andExpect(status().isOk());
 
         var actualCategory = categoryRepository.findById(actualId.getValue()).get();
 
@@ -281,7 +264,7 @@ public class CategoryE2ETest implements MockDsl {
 
         final var actualId = givenACategory("Filmes","A categoria mais assistida",true);
 
-        this.mvc.perform(delete("/categories/" + actualId.getValue()).contentType(MediaType.APPLICATION_JSON))
+        deleteACategory(actualId)
                 .andExpect(status().isNoContent());
 
         Assertions.assertFalse(this.categoryRepository.existsById(actualId.getValue()));
