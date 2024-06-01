@@ -1,7 +1,6 @@
 package com.pixelflicks.admin.catalogo.infrastructure.genre.models;
 
 import com.pixelflicks.admin.catalogo.JacksonTest;
-import com.pixelflicks.admin.catalogo.infrastructure.category.models.CategoryResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
