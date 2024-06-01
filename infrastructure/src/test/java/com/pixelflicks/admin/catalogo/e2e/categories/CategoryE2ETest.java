@@ -65,7 +65,7 @@ public class CategoryE2ETest implements MockDsl {
 
         final var actualId = givenACategory(expectedName,expectedDescription,expectedIsActive);
 
-        final var actualCategory = retrieveACategory(actualId.getValue());
+        final var actualCategory = retrieveACategory(actualId);
 
         Assertions.assertEquals(expectedName, actualCategory.name());
         Assertions.assertEquals(expectedDescription, actualCategory.description());
@@ -285,37 +285,5 @@ public class CategoryE2ETest implements MockDsl {
                 .andExpect(status().isNoContent());
 
         Assertions.assertFalse(this.categoryRepository.existsById(actualId.getValue()));
-    }
-
-    private CategoryResponse retrieveACategory(final String anId) throws Exception {
-        final var aRequest = get("/categories/" + anId).contentType(MediaType.APPLICATION_JSON);
-
-        final var json = this.mvc.perform(aRequest)
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse().getContentAsString();
-
-        return Json.readValue(json, CategoryResponse.class);
-    }
-
-    private ResultActions listCategories(final int page, final int perPage) throws Exception {
-        return listCategories(page, perPage, "", "", "");
-    }
-
-    private ResultActions listCategories(final int page, final int perPage, final String search) throws Exception {
-        return listCategories(page, perPage, search, "", "");
-    }
-
-    private ResultActions listCategories(final int page, final int perPage, final String search, final String sort, final String direction) throws Exception {
-        final var aRequest = get("/categories")
-                .queryParam("page", String.valueOf(page))
-                .queryParam("perPage", String.valueOf(perPage))
-                .queryParam("search", search)
-                .queryParam("sort", sort)
-                .queryParam("dir", direction)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON);
-
-        return this.mvc.perform(aRequest);
     }
 }
