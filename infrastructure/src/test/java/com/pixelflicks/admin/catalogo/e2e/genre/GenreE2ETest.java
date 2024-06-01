@@ -69,6 +69,31 @@ public class GenreE2ETest {
         Assertions.assertNull( actualGenre.getDeletedAt());
     }
 
+    @Test
+    public void asACatalogAdminIShouldBeAbleToCreateANewGenreWithCategories() throws Exception{
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+        Assertions.assertEquals(0, genreRepository.count());
+
+        final var filmes = givenACategory("Filmes", null, true);
+        final var expectedName = "Ação";
+        final var expectedIsActive = true;
+        final var expectedCategories = List.of(filmes);
+
+        final var actualId = givenAGenre(expectedName,expectedIsActive,expectedCategories);
+
+        final var actualGenre = genreRepository.findById(actualId.getValue()).get();
+
+        Assertions.assertEquals(expectedName, actualGenre.getName());
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive());
+        Assertions.assertTrue(expectedCategories.size() == actualGenre.getCategoryIDs().size()
+                && expectedCategories.containsAll(actualGenre.getCategoryIDs()));
+        Assertions.assertNotNull( actualGenre.getCreatedAt());
+        Assertions.assertNotNull(actualGenre.getUpdatedAt());
+        Assertions.assertNull( actualGenre.getDeletedAt());
+    }
+
+
+    //Helpers methods to genreE2E test
     private GenreID givenAGenre(final String aName, final boolean isActive, final List<CategoryID> categories) throws Exception {
         final var requestBody = new CreateGenreRequest(aName,mapTo(categories, CategoryID::getValue),isActive);
 
@@ -83,6 +108,22 @@ public class GenreE2ETest {
                 .replace("/genres/", "");
 
         return GenreID.from(actualId);
+    }
+
+    private CategoryID givenACategory(final String aName, final String aDescription, final boolean isActive) throws Exception {
+        final var requestBody = new CreateCategoryRequest(aName,aDescription,isActive);
+
+        final var aRequest = post("/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Json.writeValueAsString(requestBody));
+
+        final var actualId = this.mvc.perform(aRequest)
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse().getHeader("Location")
+                .replace("/categories/", "");
+
+        return CategoryID.from(actualId);
     }
 
     private <A,D> List<D> mapTo(final List<A> actual, final Function<A, D> mapper){
