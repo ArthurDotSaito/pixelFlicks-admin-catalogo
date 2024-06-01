@@ -2,6 +2,7 @@ package com.pixelflicks.admin.catalogo.e2e.categories;
 
 import com.pixelflicks.admin.catalogo.E2ETest;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
+import com.pixelflicks.admin.catalogo.e2e.MockDsl;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.CategoryResponse;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.CreateCategoryRequest;
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest;
@@ -22,13 +23,19 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @E2ETest
 @Testcontainers
-public class CategoryE2ETest {
+public class CategoryE2ETest implements MockDsl {
 
-    //TODO: Change latest to version
+    @Autowired
+    private MockMvc mvc;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @Container
     private static final MySQLContainer MYSQL_CONTAINER = new MySQLContainer("mysql:8.0")
             .withUsername("root")
@@ -42,11 +49,10 @@ public class CategoryE2ETest {
         registry.add("mysql.port", () -> mappedPort);
     }
 
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
+    @Override
+    public MockMvc mvc() {
+        return this.mvc;
+    }
 
     @Test
     public void asACatalogAdminIShouldBeAbleToCreateANewCategoryWithValidValues() throws Exception {
@@ -279,22 +285,6 @@ public class CategoryE2ETest {
                 .andExpect(status().isNoContent());
 
         Assertions.assertFalse(this.categoryRepository.existsById(actualId.getValue()));
-    }
-
-    private CategoryID givenACategory(final String aName, final String aDescription, final boolean isActive) throws Exception {
-        final var requestBody = new CreateCategoryRequest(aName,aDescription,isActive);
-
-        final var aRequest = post("/categories")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(Json.writeValueAsString(requestBody));
-
-        final var actualId = this.mvc.perform(aRequest)
-                .andExpect(status().isCreated())
-                .andReturn()
-                .getResponse().getHeader("Location")
-                .replace("/categories/", "");
-
-        return CategoryID.from(actualId);
     }
 
     private CategoryResponse retrieveACategory(final String anId) throws Exception {
