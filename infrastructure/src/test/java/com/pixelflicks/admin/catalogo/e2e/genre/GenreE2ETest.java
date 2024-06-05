@@ -98,11 +98,11 @@ public class GenreE2ETest implements MockDsl {
         Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
         Assertions.assertEquals(0, genreRepository.count());
 
-        givenAGenre("Filmes",true, List.of());
+        givenAGenre("Ação",true, List.of());
         givenAGenre("Esportes",true,List.of());
         givenAGenre("Drama",true,List.of());
 
-        listCategories(0,1)
+        listGenres(0,1)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.current_page", equalTo(0)))
                 .andExpect(jsonPath("$.per_page", equalTo(1)))
@@ -110,7 +110,7 @@ public class GenreE2ETest implements MockDsl {
                 .andExpect(jsonPath("$.items", hasSize(1)))
                 .andExpect(jsonPath("$.items[0].name", equalTo("Filmes")));
 
-        listCategories(1,1)
+        listGenres(1,1)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.current_page", equalTo(1)))
                 .andExpect(jsonPath("$.per_page", equalTo(1)))
@@ -118,7 +118,7 @@ public class GenreE2ETest implements MockDsl {
                 .andExpect(jsonPath("$.items", hasSize(1)))
                 .andExpect(jsonPath("$.items[0].name", equalTo("Esportes")));
 
-        listCategories(2,1)
+        listGenres(2,1)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.current_page", equalTo(2)))
                 .andExpect(jsonPath("$.per_page", equalTo(1)))
@@ -126,7 +126,7 @@ public class GenreE2ETest implements MockDsl {
                 .andExpect(jsonPath("$.items", hasSize(1)))
                 .andExpect(jsonPath("$.items[0].name", equalTo("Drama")));
 
-        listCategories(3,1)
+        listGenres(3,1)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.current_page", equalTo(3)))
                 .andExpect(jsonPath("$.per_page", equalTo(1)))
@@ -139,11 +139,11 @@ public class GenreE2ETest implements MockDsl {
         Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
         Assertions.assertEquals(0, genreRepository.count());
 
-        givenAGenre("Filmes",true, List.of());
+        givenAGenre("Ação",true, List.of());
         givenAGenre("Esportes",true,List.of());
         givenAGenre("Drama",true,List.of());
 
-        listCategories(0,1,"dra")
+        listGenres(0,1,"dra")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.current_page", equalTo(0)))
                 .andExpect(jsonPath("$.per_page", equalTo(1)))
@@ -153,22 +153,22 @@ public class GenreE2ETest implements MockDsl {
     }
 
     @Test
-    public void asACatalogAdminIShouldBeAbleToSortAllCategoriesByDescriptionDesc() throws Exception {
+    public void asACatalogAdminIShouldBeAbleToSortAllGenreByDescriptionDesc() throws Exception {
         Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
-        Assertions.assertEquals(0, categoryRepository.count());
+        Assertions.assertEquals(0, genreRepository.count());
 
-        givenACategory("Filmes","C",true);
-        givenACategory("Documentários","Z",true);
-        givenACategory("Séries","A",true);
+        givenAGenre("Ação",true, List.of());
+        givenAGenre("Esportes",true,List.of());
+        givenAGenre("Drama",true,List.of());
 
-        listCategories(0,3,"", "description", "desc")
+        listGenres(0,3,"", "description", "desc")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.current_page", equalTo(0)))
                 .andExpect(jsonPath("$.per_page", equalTo(3)))
                 .andExpect(jsonPath("$.total", equalTo(3)))
                 .andExpect(jsonPath("$.items", hasSize(3)))
-                .andExpect(jsonPath("$.items[0].name", equalTo("Documentários")))
-                .andExpect(jsonPath("$.items[1].name", equalTo("Filmes")))
-                .andExpect(jsonPath("$.items[2].name", equalTo("Séries")));
+                .andExpect(jsonPath("$.items[0].name", equalTo("Esportes")))
+                .andExpect(jsonPath("$.items[1].name", equalTo("Drama")))
+                .andExpect(jsonPath("$.items[2].name", equalTo("Ação")));
     }
 }
