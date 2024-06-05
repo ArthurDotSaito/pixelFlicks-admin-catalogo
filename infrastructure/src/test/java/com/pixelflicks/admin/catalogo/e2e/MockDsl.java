@@ -8,6 +8,7 @@ import com.pixelflicks.admin.catalogo.infrastructure.category.models.CreateCateg
 import com.pixelflicks.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest;
 import com.pixelflicks.admin.catalogo.infrastructure.configuration.json.Json;
 import com.pixelflicks.admin.catalogo.infrastructure.genre.models.CreateGenreRequest;
+import com.pixelflicks.admin.catalogo.infrastructure.genre.models.GenreResponse;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MockMvcBuilder;
@@ -69,6 +70,10 @@ public interface MockDsl {
 
     default ResultActions listGenres(final int page, final int perPage, final String search) throws Exception {
         return listGenres(page, perPage, search, "", "");
+    }
+
+    default GenreResponse retrieveAGenre(final Identifier anId) throws Exception {
+        return this.retrieve("/genres/", anId, GenreResponse.class);
     }
 
     default ResultActions updateACategory(final Identifier anId, final UpdateCategoryRequest aRequest) throws Exception {

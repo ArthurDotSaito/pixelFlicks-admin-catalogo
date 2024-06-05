@@ -4,9 +4,11 @@ import com.pixelflicks.admin.catalogo.E2ETest;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.e2e.MockDsl;
 import com.pixelflicks.admin.catalogo.infrastructure.genre.persistence.GenreRepository;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,6 +20,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -170,5 +173,40 @@ public class GenreE2ETest implements MockDsl {
                 .andExpect(jsonPath("$.items[0].name", equalTo("Esportes")))
                 .andExpect(jsonPath("$.items[1].name", equalTo("Drama")))
                 .andExpect(jsonPath("$.items[2].name", equalTo("Ação")));
+    }
+
+    @Test
+    public void asACatalogAdminIShouldBeAbleToGetAGenreByItsIdentifier() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+        Assertions.assertEquals(0, genreRepository.count());
+
+        final var filmes = givenACategory("Filmes", null, true);
+        final var expectedName = "Ação";
+        final var expectedIsActive = true;
+        final var expectedCategories = List.of(filmes);
+
+        final var actualId = givenAGenre(expectedName,expectedIsActive,expectedCategories);
+
+        final var actualGenre = retrieveAGenre(actualId);
+
+        Assertions.assertEquals(expectedName, actualGenre.name());
+        Assertions.assertTrue(expectedCategories.size() == actualGenre.categories().size()
+        && mapTo(expectedCategories, CategoryID::getValue).containsAll(actualGenre.categories()));
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive());
+        Assertions.assertNotNull( actualGenre.getCreatedAt());
+        Assertions.assertNotNull(actualGenre.getUpdatedAt());
+        Assertions.assertNull( actualGenre.getDeletedAt());
+    }
+
+    @Test
+    public void asACatalogAdminIShouldBeAbleToSeeATreatedErrorByGettingANotFoundCategory() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+        Assertions.assertEquals(0, categoryRepository.count());
+
+        final var aRequest = get("/categories/123").contentType(MediaType.APPLICATION_JSON);
+
+        final var json = this.mvc.perform(aRequest)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", equalTo("Category with Id 123 was not found")));
     }
 }
