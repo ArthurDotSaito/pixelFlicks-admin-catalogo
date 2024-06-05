@@ -94,7 +94,7 @@ public class GenreE2ETest implements MockDsl {
         Assertions.assertNull( actualGenre.getDeletedAt());
     }
 
-    public void asACatalogAdminIShouldBeAbleToNavigateThruAllCategories() throws Exception {
+    public void asACatalogAdminIShouldBeAbleToNavigateThruAllGenres() throws Exception {
         Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
         Assertions.assertEquals(0, genreRepository.count());
 
@@ -135,21 +135,21 @@ public class GenreE2ETest implements MockDsl {
     }
 
     @Test
-    public void asACatalogAdminIShouldBeAbleToSearchBetweenAllCategories() throws Exception {
+    public void asACatalogAdminIShouldBeAbleToSearchBetweenAllGenres() throws Exception {
         Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
-        Assertions.assertEquals(0, categoryRepository.count());
+        Assertions.assertEquals(0, genreRepository.count());
 
-        givenACategory("Filmes",null,true);
-        givenACategory("Documentários",null,true);
-        givenACategory("Séries",null,true);
+        givenAGenre("Filmes",true, List.of());
+        givenAGenre("Esportes",true,List.of());
+        givenAGenre("Drama",true,List.of());
 
-        listCategories(0,1,"fil")
+        listCategories(0,1,"dra")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.current_page", equalTo(0)))
                 .andExpect(jsonPath("$.per_page", equalTo(1)))
                 .andExpect(jsonPath("$.total", equalTo(1)))
                 .andExpect(jsonPath("$.items", hasSize(1)))
-                .andExpect(jsonPath("$.items[0].name", equalTo("Filmes")));
+                .andExpect(jsonPath("$.items[0].name", equalTo("Drama")));
     }
 
     @Test
