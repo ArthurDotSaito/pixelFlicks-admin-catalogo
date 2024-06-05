@@ -161,7 +161,7 @@ public class GenreE2ETest implements MockDsl {
         givenAGenre("Esportes",true,List.of());
         givenAGenre("Drama",true,List.of());
 
-        listGenres(0,3,"", "description", "desc")
+        listGenres(0,3,"", "name", "desc")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.current_page", equalTo(0)))
                 .andExpect(jsonPath("$.per_page", equalTo(3)))
