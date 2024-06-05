@@ -99,7 +99,9 @@ public interface MockDsl {
     }
 
     private <T> T retrieve(final String url, final Identifier anId, final Class<T> clazz) throws Exception {
-        final var aRequest = get(url + anId.getValue()).contentType(MediaType.APPLICATION_JSON);
+        final var aRequest = get(url + anId.getValue())
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON_UTF8);
 
         final var json = this.mvc().perform(aRequest)
                 .andExpect(status().isOk())

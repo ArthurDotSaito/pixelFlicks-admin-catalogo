@@ -4,7 +4,6 @@ import com.pixelflicks.admin.catalogo.E2ETest;
 import com.pixelflicks.admin.catalogo.domain.category.CategoryID;
 import com.pixelflicks.admin.catalogo.e2e.MockDsl;
 import com.pixelflicks.admin.catalogo.infrastructure.genre.persistence.GenreRepository;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -192,21 +191,21 @@ public class GenreE2ETest implements MockDsl {
         Assertions.assertEquals(expectedName, actualGenre.name());
         Assertions.assertTrue(expectedCategories.size() == actualGenre.categories().size()
         && mapTo(expectedCategories, CategoryID::getValue).containsAll(actualGenre.categories()));
-        Assertions.assertEquals(expectedIsActive, actualGenre.isActive());
-        Assertions.assertNotNull( actualGenre.getCreatedAt());
-        Assertions.assertNotNull(actualGenre.getUpdatedAt());
-        Assertions.assertNull( actualGenre.getDeletedAt());
+        Assertions.assertEquals(expectedIsActive, actualGenre.active());
+        Assertions.assertNotNull( actualGenre.createdAt());
+        Assertions.assertNotNull(actualGenre.updatedAt());
+        Assertions.assertNull( actualGenre.deletedAt());
     }
 
     @Test
     public void asACatalogAdminIShouldBeAbleToSeeATreatedErrorByGettingANotFoundCategory() throws Exception {
         Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
-        Assertions.assertEquals(0, categoryRepository.count());
+        Assertions.assertEquals(0, genreRepository.count());
 
-        final var aRequest = get("/categories/123").contentType(MediaType.APPLICATION_JSON);
+        final var aRequest = get("/genres/123").contentType(MediaType.APPLICATION_JSON);
 
         final var json = this.mvc.perform(aRequest)
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message", equalTo("Category with Id 123 was not found")));
+                .andExpect(jsonPath("$.message", equalTo("Genre with Id 123 was not found")));
     }
 }
