@@ -36,13 +36,6 @@ public interface MockDsl {
         return CategoryID.from(actualId);
     }
 
-    default GenreID givenAGenre(final String aName, final boolean isActive, final List<CategoryID> categories) throws Exception {
-        final var requestBody = new CreateGenreRequest(aName,mapTo(categories, CategoryID::getValue),isActive);
-
-        final var actualId = this.given("/genres", requestBody);
-
-        return GenreID.from(actualId);
-    }
     default ResultActions listCategories(final int page, final int perPage, final String search, final String sort, final String direction) throws Exception {
         return this.list("/categories", page, perPage, search,sort, direction);
     }
@@ -56,6 +49,26 @@ public interface MockDsl {
 
     default CategoryResponse retrieveACategory(final Identifier anId) throws Exception {
         return this.retrieve("/categories/", anId, CategoryResponse.class);
+    }
+
+    default GenreID givenAGenre(final String aName, final boolean isActive, final List<CategoryID> categories) throws Exception {
+        final var requestBody = new CreateGenreRequest(aName,mapTo(categories, CategoryID::getValue),isActive);
+
+        final var actualId = this.given("/genres", requestBody);
+
+        return GenreID.from(actualId);
+    }
+
+    default ResultActions listGenres(final int page, final int perPage, final String search, final String sort, final String direction) throws Exception {
+        return this.list("/genres", page, perPage, search,sort, direction);
+    }
+
+    default ResultActions listGenres(final int page, final int perPage) throws Exception {
+        return this.listGenres(page, perPage, "", "", "");
+    }
+
+    default ResultActions listGenres(final int page, final int perPage, final String search) throws Exception {
+        return listGenres(page, perPage, search, "", "");
     }
 
     default ResultActions updateACategory(final Identifier anId, final UpdateCategoryRequest aRequest) throws Exception {
