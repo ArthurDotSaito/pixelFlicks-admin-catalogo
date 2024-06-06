@@ -9,6 +9,7 @@ import com.pixelflicks.admin.catalogo.infrastructure.category.models.UpdateCateg
 import com.pixelflicks.admin.catalogo.infrastructure.configuration.json.Json;
 import com.pixelflicks.admin.catalogo.infrastructure.genre.models.CreateGenreRequest;
 import com.pixelflicks.admin.catalogo.infrastructure.genre.models.GenreResponse;
+import com.pixelflicks.admin.catalogo.infrastructure.genre.models.UpdateGenreRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MockMvcBuilder;
@@ -52,6 +53,14 @@ public interface MockDsl {
         return this.retrieve("/categories/", anId, CategoryResponse.class);
     }
 
+    default ResultActions updateACategory(final Identifier anId, final UpdateCategoryRequest aRequest) throws Exception {
+        return this.update("/categories/", anId, aRequest);
+    }
+
+    default ResultActions deleteAGenre(final Identifier anId) throws Exception {
+        return this.delete("/genres/", anId);
+    }
+
     default GenreID givenAGenre(final String aName, final boolean isActive, final List<CategoryID> categories) throws Exception {
         final var requestBody = new CreateGenreRequest(aName,mapTo(categories, CategoryID::getValue),isActive);
 
@@ -76,8 +85,8 @@ public interface MockDsl {
         return this.retrieve("/genres/", anId, GenreResponse.class);
     }
 
-    default ResultActions updateACategory(final Identifier anId, final UpdateCategoryRequest aRequest) throws Exception {
-        return this.update("/categories/", anId, aRequest);
+    default ResultActions updateAGenre(final Identifier anId, final UpdateGenreRequest aRequest) throws Exception {
+        return this.update("/genres/", anId, aRequest);
     }
 
     default  <A,D> List<D> mapTo(final List<A> actual, final Function<A, D> mapper){
